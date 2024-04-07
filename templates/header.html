@@ -1,82 +1,255 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
 
-      <title>Finanse</title>
-         <link rel="icon" href="bank.svg">
+  <head>
+    <script src="../static/js/color-modes.js"></script>
 
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
-      <style>
-        .feature-icon {
-          width: 4rem;
-          height: 4rem;
-          border-radius: 0.75rem;
-        }
-      </style>
-        <link rel="stylesheet" href="/static/css/styles.css">
-    </head>
+    <meta charset="utf-8">
+    <link rel="icon" href="#bank">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Finance app">
+    <meta name="author" content="Kacper Bogucki">
+
+    <title>Finance</title>
+    <link rel="icon" href="bank.svg">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/headers.css" rel="stylesheet" >
+
+  </head>
   <body>
-<header>
+
+  <!--night mode on/off-->
+<!--    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">-->
+<!--      <symbol id="check2" viewBox="0 0 16 16">-->
+<!--        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>-->
+<!--      </symbol>-->
+<!--      <symbol id="circle-half" viewBox="0 0 16 16">-->
+<!--        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>-->
+<!--      </symbol>-->
+<!--      <symbol id="moon-stars-fill" viewBox="0 0 16 16">-->
+<!--        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>-->
+<!--        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>-->
+<!--      </symbol>-->
+<!--      <symbol id="sun-fill" viewBox="0 0 16 16">-->
+<!--        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>-->
+<!--      </symbol>-->
+<!--    </svg>-->
+
+
+<!--    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">-->
+<!--      <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"-->
+<!--              id="bd-theme"-->
+<!--              type="button"-->
+<!--              aria-expanded="false"-->
+<!--              data-bs-toggle="dropdown"-->
+<!--              aria-label="Toggle theme (auto)">-->
+<!--        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#circle-half"></use></svg>-->
+<!--        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>-->
+<!--      </button>-->
+<!--      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">-->
+<!--        <li>-->
+<!--          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">-->
+<!--            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#sun-fill"></use></svg>-->
+<!--            Light-->
+<!--            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>-->
+<!--          </button>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">-->
+<!--            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#moon-stars-fill"></use></svg>-->
+<!--            Dark-->
+<!--            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>-->
+<!--          </button>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">-->
+<!--            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#circle-half"></use></svg>-->
+<!--            Auto-->
+<!--            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>-->
+<!--          </button>-->
+<!--        </li>-->
+<!--      </ul>-->
+<!--    </div>-->
+
+<!--    icons-->
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="bootstrap" viewBox="0 0 118 94">
+    <title>Bootstrap</title>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z"></path>
+  </symbol>
+  <symbol id="bank" viewBox="0 0 16 16">
+    <path d="m8 0 6.61 3h.89a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v7a.5.5 0 0 1 .485.38l.5 2a.498.498 0 0 1-.485.62H.5a.498.498 0 0 1-.485-.62l.5-2A.5.5 0 0 1 1 13V6H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 3h.89zM3.777 3h8.447L8 1zM2 6v7h1V6zm2 0v7h2.5V6zm3.5 0v7h1V6zm2 0v7H12V6zM13 6v7h1V6zm2-1V4H1v1zm-.39 9H1.39l-.25 1h13.72z"/>
+  </symbol>
+  <symbol id="home" viewBox="0 0 16 16">
+    <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+  </symbol>
+  <symbol id="speedometer2" viewBox="0 0 16 16">
+    <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4zM3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"/>
+    <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A7.988 7.988 0 0 1 0 10zm8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3z"/>
+  </symbol>
+  <symbol id="table" viewBox="0 0 16 16">
+    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
+  </symbol>
+  <symbol id="people-circle" viewBox="0 0 16 16">
+    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+  </symbol>
+  <symbol id="grid" viewBox="0 0 16 16">
+    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+  </symbol>
+  <symbol id="box-arrow-left" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"/>
+    <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
+  </symbol>
+  <symbol id="box-arrow-right" viewBox="0 0 16 16">
+    <path d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+  </symbol>
+  <symbol id="sliders" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+  </symbol>
+  <symbol id="graph" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/>
+  </symbol>
+  <symbol id="cash-coin" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"/>
+    <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z"/>
+    <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z"/>
+    <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567"/>
+  </symbol>
+    <symbol id="credit" viewBox="0 0 16 16">
+   <path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
+  <path d="M2 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
+ </symbol>
+</svg>
+<!--{% set current_page = current_page %}-->
+<main>
+  <header>
     <div class="px-3 py-2 text-bg-dark border-bottom">
       <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bank"/></svg>
+            {% if user.is_authenticated: %}
+            Hello again, {{user.name}}!
+            {% else %}
+            Not logged in
+            {% endif %}
+
+
           </a>
 
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+
             <li>
-              <a href="#" class="nav-link text-secondary">
+              {% if current_page == 'index.html' %}
+              <a href="{{ url_for('main')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('main')}}" class="nav-link text-white">
+                {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"/></svg>
                 Home
               </a>
             </li>
+            {% if user.is_authenticated: %}
             <li>
-              <a href="#" class="nav-link text-white">
+              {% if current_page == 'cashflow.html' %}
+                <a href="{{ url_for('cashflow')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('cashflow')}}" class="nav-link text-white">
+                  {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
-                Dashboard
+                Cashflow
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
-                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
-                Orders
+              {% if current_page == 'budget.html' %}
+              <a href="{{ url_for('budget')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('budget')}}" class="nav-link text-white">
+                  {% endif %}
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#cash-coin"/></svg>
+                Budget
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
-                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"/></svg>
-                Products
+              {% if current_page == 'stats.html' %}
+              <a href="{{ url_for('stats')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('stats')}}" class="nav-link text-white">
+                  {% endif %}
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#graph"/></svg>
+                Stats
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
+              {% if current_page == 'loans.html' %}
+              <a href="{{ url_for('loans')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('loans')}}" class="nav-link text-white">
+                  {% endif %}
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#credit"/></svg>
+                Loans
+              </a>
+            </li>
+<!--            <li>-->
+<!--              <a href="#" class="nav-link text-white">-->
+<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"/></svg>-->
+<!--                Simulations-->
+<!--              </a>-->
+<!--            </li>-->
+            <li>
+              {% if current_page == 'profile.html' %}
+                <a href="{{ url_for('profile')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('profile')}}" class="nav-link text-white">
+                  {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>
-                Customers
+                Profile
               </a>
             </li>
+            {% else %}
+            <li>
+              {% if current_page == 'login_page.html' %}
+              <a href="{{ url_for('login_page')}}" class="nav-link text-secondary">
+                {% else %}
+                <a href="{{ url_for('login_page')}}" class="nav-link text-white">
+                  {% endif %}
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#box-arrow-right"/></svg>
+                Login
+              </a>
+            </li>
+            {% endif %}
+            {% if user.id==1: %}
+            <li>
+              <a href="{{ url_for('admin_settings')}}" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#sliders"/></svg>
+                Admin Settings
+              </a>
+            </li>
+            {% endif %}
+            {% if user.is_authenticated: %}
+            <li>
+              <a href="{{ url_for('logout')}}" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#box-arrow-left"/></svg>
+                Logout
+              </a>
+            </li>
+            {% endif %}
+
           </ul>
         </div>
       </div>
     </div>
-    <div class="px-3 py-2 border-bottom mb-3">
-      <div class="container d-flex flex-wrap justify-content-center">
-        <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
-
-        <div class="text-end">
-          <button type="button" class="btn btn-light text-dark me-2">Login</button>
-          <button type="button" class="btn btn-primary">Sign-up</button>
-        </div>
-      </div>
-    </div>
   </header>
-<!--    <body>-->
-<!--    <h1>Hello, world!</h1>-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>-->
-<!--  </body>-->
+
+
+</main>
+<script src="../static/js/bootstrap.bundle.min.js"></script>

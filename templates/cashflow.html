@@ -2,8 +2,236 @@
 {% include "header.html" %}
 
 
+  <div class="container">
+    <h1>Insert your assets for month 0<label id="selected-month-label">0</label>/2024</h1>
+    <p>Wypisz swoje wszystkie aktywa. Proszę ja Ciebie.<strong>contenteditable</strong> and some simple jQuery you can easily create a custom editable table. No need for a robust JavaScript library anymore these days.</p>
+    <h4>Total assets <span id="totalPLN">0</span> PLN</h4>
 
-  <h1><center>Podstrona. Hurra! 🌞 </h1>
+
+      <label for="month-select">Wanna change month? <select id="month-select"></select></label>
+
+
+    <div id="table" class="table-editable">
+      <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button>
+      <table id='cashflowTable' class="table" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Value/pcs</th>
+            <th>Amount</th>
+            <th>Value PLN</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- This is our clonable table line -->
+          {% for value in data %}
+            <tr>
+            <td id='1' contenteditable="true">{{value[0].name}}</td>
+            <td id='2' contenteditable="true">{{value[0].value_pcs}}</td>
+            <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+            <td id='4' contenteditable="true">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
+            <td>
+              <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
+              <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
+              <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+
+          {% endfor %}
+<!--          </tr>-->
+        </tbody>
+      </table>
+    </div>
+
+    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>
+    <button id="export-btn" class="btn btn-primary">Export Data</button>
+    <p id="export"></p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  var $TABLE = $("#table");
+  var $BTN = $("#export-btn");
+  var $EXPORT = $("#export");
+
+   function refreshValuePLN() {
+    var totalPLN = 0; // Inicjujemy sumę wartości PLN
+    // Iterujemy przez każdy wiersz w tabeli
+    $('#cashflowTable tbody tr').each(function() {
+      var $row = $(this);
+      // Pobieramy wartości z kolumn "Value/pcs" i "Amount" dla danego wiersza
+      var valuePcs = parseFloat($row.find('td:eq(1)').text()) || 0; // wartość domyślna 0, jeśli wartość nie jest liczbą
+      var amount = parseFloat($row.find('td:eq(2)').text()) || 0;
+      // Obliczamy wartość PLN i aktualizujemy kolumnę "Value PLN" w danym wierszu
+      var valuePLN = valuePcs * amount;
+      $row.find('td:eq(3)').text(valuePLN.toFixed(2)); // Zaokrąglamy do dwóch miejsc po przecinku
+      totalPLN += valuePLN; // Dodajemy wartość PLN do sumy
+    });
+    $('#totalPLN').text(totalPLN.toFixed(2)); // Aktualizujemy wartość Total PLN
+  }
+
+// Wywołujemy funkcję refreshValuePLN() po zmianie wartości w kolumnach "Value/pcs" lub "Amount"
+$('#cashflowTable').on('input', 'tbody td:nth-child(2), tbody td:nth-child(3)', function() {
+  refreshValuePLN();
+});
+
+function generateMonthOptions() {
+    var currentDate = new Date(); // Pobieramy aktualną datę
+    var currentYear = currentDate.getFullYear(); // Pobieramy aktualny rok
+    var currentMonth = currentDate.getMonth() + 1; // Pobieramy aktualny miesiąc (indeksowany od 0)
+
+    // Pętla od stycznia 2024 do aktualnego miesiąca
+    for (var year = 2024; year <= currentYear; year++) {
+      // W pierwszym roku (2024) pętla zaczyna się od stycznia
+      // W kolejnych latach zaczynamy od stycznia (miesiąc 1)
+      // Jeśli jesteśmy w aktualnym roku, kończymy na aktualnym miesiącu
+      var startMonth = (year === 2024) ? 1 : 1;
+      var endMonth = (year === currentYear) ? currentMonth : 12;
+
+      // Generujemy opcje dla miesięcy w danym roku
+      for (var month = startMonth; month <= endMonth; month++) {
+        // Tworzymy element option i dodajemy go do menu wyboru
+        var option = document.createElement('option');
+        option.value = year + '-' + (month < 10 ? '0' : '') + month; // Formatujemy wartość opcji na 'YYYY-MM'
+        option.text = (month < 10 ? '0' : '') + month + '/' + year; // Tekst opcji w formacie 'MM/YYYY'
+        document.getElementById('month-select').appendChild(option);
+      }
+    }
+  }
+
+  // Wywołujemy funkcję generującą opcje dla menu wyboru miesiąca
+  generateMonthOptions();
+
+$(document).ready(function() {
+    // Pobierz bieżący miesiąc z bazy danych i ustaw go jako domyślną wartość dla menu rozwijanego
+    $.get('/current_month', function(data) {
+        $('#month-select').val(data);
+        $('#selected-month-label').text(data); // Ustaw wartość etykiety na wybrany miesiąc
+    });
+
+    $('#month-select').change(function() {
+        var selectedMonth = $(this).val();
+        $.post('/update_month', { month: selectedMonth }, function(data) {
+            // Po zakończeniu aktualizacji przekieruj na stronę główną
+            window.location.reload();
+        });
+    });
+    refreshValuePLN();
+});
+
+$(document).on("click", ".table-add", function () {
+
+  const newRow1 = "<tr>\n" +
+          "            <td contenteditable=\"true\">edit me)</td>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td>\n" +
+          "              <button class=\"table-up btn btn-primary\" aria-label=\"Move Row Up\"><i class=\"fas fa-arrow-up\"></i></button>\n" +
+          "              <button class=\"table-down btn btn-primary\" aria-label=\"Move Row Down\"><i class=\"fas fa-arrow-down\"></i></button>\n" +
+          "              <button class=\"table-remove btn btn-danger\" aria-label=\"Remove Row\"><i class=\"fas fa-trash-alt\"></i></button>\n" +
+          "            </td>\n" +
+          "          </tr>";
+  //console.log(#table);
+  // Dodaj sklonowany wiersz do tabeli
+  $(this).closest("#table").find("tbody").append(newRow1);
+});
+
+
+
+
+
+  $(document).on("click", ".table-remove", function () {
+    $(this).closest("tr").remove();
+  });
+
+  $(document).on("click", ".table-up", function () {
+    var $row = $(this).closest("tr");
+    if ($row.index() === 0) return; // Don't go above the header
+    $row.prev().before($row);
+  });
+
+  $(document).on("click", ".table-down", function () {
+    var $row = $(this).closest("tr");
+    $row.next().after($row);
+  });
+$BTN.click(function () {
+    var $rows = $TABLE.find("tr:not(:hidden)");
+    var headers = [];
+    var names = {};
+
+    console.log(document.getElementById('2'))
+    const table = document.getElementById('cashflowTable');
+    var data = [];
+
+    for(var i = 1; i < table.rows.length; i++) {
+        var row = table.rows[i];
+        var name = row.cells[0].innerText.trim();
+        var value_pcs = row.cells[1].innerText.trim();
+        var amount = row.cells[2].innerText.trim();
+        var value_pln = row.cells[3].innerText.trim();
+
+        // Sprawdź, czy 'name' jest unikalne
+        if (names[name]) {
+            alert('Nazwa "' + name + '" nie jest unikalna!');
+            return; // Przerywa działanie pętli i nie wysyła danych
+        }
+
+        // Dodaj dane do tablicy
+        var rowData = {
+            name: name,
+            value_pcs: value_pcs,
+            amount: amount,
+            value_pln: value_pln
+        };
+        data.push(rowData);
+
+        // Zaznacz, że 'name' zostało już użyte
+        names[name] = true;
+    }
+
+    fetch('/cashflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log(data);
+    //   alert(data.message);
+    // })
+    // .catch(error => {
+    //   console.error('Error:', error);
+    //   alert('An error occurred while saving data');
+    // });
+
+    console.log(data)
+    // Get the headers
+    // $($rows.shift()).find("th:not(:empty)").each(function () {
+    //   headers.push($(this).text().toLowerCase());
+    // });
+    //
+    // // Turn all existing rows into a loopable array
+    // $rows.each(function () {
+    //   var $td = $(this).find("td");
+    //   var h = {};
+    //
+    //   // Use the headers from earlier to name our hash keys
+    //   headers.forEach(function (header, i) {
+    //     h[header] = $td.eq(i).text();
+    //   });
+    //
+    //   data.push(h);
+    // });
+    //
+    // // Output the result
+    // $EXPORT.text(JSON.stringify(data));
+  });
+</script>
 
 
 

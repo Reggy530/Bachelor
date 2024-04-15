@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import UniqueConstraint, and_
 from datetime import datetime, timedelta
 import requests
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -14,7 +15,7 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+default_cashflow_entries = [['Allegro', 'Borjar'],['Faglar', 'Hunja']]
 
 # Create a user_loader callback
 @login_manager.user_loader
@@ -32,13 +33,28 @@ def admin_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+    current_period = db.Column(db.Integer, default=4)
 
+class Assets(db.Model):
+    __tablename__ = 'assets'
+    asset_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    period = db.Column(db.Integer)
+    name = db.Column(db.String(100))
+    value_pcs = db.Column(db.Float)
+    amount = db.Column(db.Float)
+    value_pln = db.Column(db.Float)
+    __table_args__ = (
+        UniqueConstraint('name', 'period', name='_name_period_uc'),
+    )
 with app.app_context():
     db.create_all()
 
@@ -48,9 +64,54 @@ def main():
     print(current_user)
     return render_template('index.html', user=current_user, current_page='index.html')
 
-@app.route('/cashflow')
+@app.route('/current_month', methods=['GET'])
+def current_month():
+    # Pobierz bieżący miesiąc dla aktualnego użytkownika z bazy danych
+    current_month = current_user.current_period
+    return str(current_month)
+
+@app.route('/cashflow', methods=["GET", "POST"])
 def cashflow():
-    return render_template('cashflow.html', user=current_user, current_page='cashflow.html')
+    if request.method == "POST":
+        data = request.get_json()
+        db.session.query(Assets).filter_by(user_id=current_user.id, period=current_user.current_period).delete()
+        for dd in data:
+            asset = Assets(
+                user_id = current_user.id,
+                period = current_user.current_period,
+                name = dd['name'],
+                value_pcs= float(dd['value_pcs']) if dd['value_pcs'] else 1,
+                amount = float(dd['amount']) if dd['amount'] else None,
+                value_pln = float(dd['value_pln']) if dd['value_pln'] else None
+
+            )
+            print(asset)
+            db.session.add(asset)
+        db.session.commit()
+
+
+    result = db.session.execute(
+        db.select(Assets).where(and_(Assets.user_id == current_user.id, Assets.period == current_user.current_period)))
+
+    data = result.fetchall()
+    print(data)
+
+    return render_template('cashflow.html', user=current_user, current_page='cashflow.html', values=default_cashflow_entries, data=data)
+
+@app.route('/update_month', methods=['POST'])
+def update_month():
+    selected_month = request.form['month']
+
+    # Przekształć datę w formacie "YYYY-MM" na numer miesiąca
+    year, month = map(int, selected_month.split('-'))
+    month_number = (year - 2024) * 12 + month
+
+    print("Numer miesiąca:", month_number)  # Sprawdzamy numer miesiąca w konsoli
+
+    # Aktualizuj wartość current_period dla aktualnego użytkownika
+    current_user.current_period = month_number
+    db.session.commit()
+    return 'OK'
 
 @app.route('/budget')
 def budget():
@@ -125,5 +186,5 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=2137)
+    app.run(debug=True, port=2134)
 

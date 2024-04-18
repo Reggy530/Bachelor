@@ -53,8 +53,22 @@ class Assets(db.Model):
     amount = db.Column(db.Float)
     value_pln = db.Column(db.Float)
     __table_args__ = (
-        UniqueConstraint('name', 'period', name='_name_period_uc'),
+        UniqueConstraint('name', 'period', 'user_id', name='_name_period_uc'),
     )
+
+class Budget(db.Model):
+    __tablename__ = 'budget'
+    budget_id = db.Column(db.Integer, primary_key=True)
+    is_income = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+    period = db.Column(db.Integer)
+    name = db.Column(db.String(100))
+    amount = db.Column(db.Float)
+    estimated = db.Column(db.Float)
+    __table_args__ = (
+        UniqueConstraint('name', 'period', 'user_id', name='unique_budget'),
+    )
+
 with app.app_context():
     db.create_all()
 
@@ -115,7 +129,30 @@ def update_month():
 
 @app.route('/budget')
 def budget():
-    return render_template('budget.html', user=current_user, current_page='budget.html')
+    if request.method == "POST":
+        data = request.get_json()
+        db.session.query(Budget).filter_by(user_id=current_user.id, period=current_user.current_period).delete()
+        for dd in data:
+            budgett = Budget(
+                user_id=current_user.id,
+                period=current_user.current_period,
+                name=dd['name'],
+                value_pcs=float(dd['value_pcs']) if dd['value_pcs'] else 1,
+                amount=float(dd['amount']) if dd['amount'] else None,
+                value_pln=float(dd['value_pln']) if dd['value_pln'] else None
+
+            )
+            print(budgett)
+            db.session.add(budgett)
+        # db.session.commit()
+
+    result = db.session.execute(
+        db.select(Budget).where(and_(Budget.user_id == current_user.id, Budget.period == current_user.current_period)))
+
+    data = result.fetchall()
+    print(data)
+
+    return render_template('budget.html', user=current_user, current_page='budget.html', data=data)
 
 @app.route('/stats')
 def stats():

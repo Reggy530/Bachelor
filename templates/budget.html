@@ -2,8 +2,325 @@
 {% include "header.html" %}
 
 
+  <div class="container">
+    <p></p>
+    <h1>This is your budget for month 0<label id="selected-month-label">0</label>/2024</h1>
+    <label for="month-select">Wanna change month? <select id="month-select"></select></label>
+    <p></p>
+    <p>Po prostu wypisz swój budżet. Tutaj jest jakiś dodatkowy opis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu. Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras porttitor tempor erat in venenatis. Ut semper augue id enim pharetra fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae suscipit felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat pulvinar eget est. Quisque. </p>
+<!--    <h4>Total budget: <span id="total">0</span> PLN</h4>-->
+      <h4>Totals (estimated/real):</h4>
+    <h4>Income: <span id="label-est-income">0</span> PLN / <span id="label-income">0</span> PLN</h4>
+    <h4>Budget: <span id="label-est-budget">0</span> PLN / <span id="label-budget">0</span> PLN</h4>
+    <h4>Balance: <span id="label-est-balance">0</span> PLN / <span id="label-balance">0</span> PLN</h4>
+    <p></p>
+    <br>
+    <div id="table-income" class="table-editable">
+      <h3>Incomes <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
-  <h1><center>Podstrona. Hurra! 🌞 </h1>
+      <table id='cashflowTable-incomes' class="table" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>Income name</th>
+            <th></th>
+            <th data-index="11">Estimated</th>
+            <th data-index="12">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for value in data %}
+            {% if value[0].is_income %}
+                {% if value[0].name == 'Cash PLN'
+                or value[0].name == 'Cash EUR'
+                or value[0].name == 'Cash USD'
+                or value[0].name == 'Account PLN'
+                or value[0].name == 'Account EUR'
+                or value[0].name == 'Credit Card'
+                or value[0].name == 'Allegro Pay'
+                %}
+                  <td id='income-name' contenteditable="false">{{value[0].name}}</td>
+                     <td></td>
+                  <td id='income-estimated' contenteditable="true">{{value[0].value_pcs}}</td>
+
+                  <td id='income-amount' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+
+                  <td></td>
+                {% else %}
+
+                  <tr>
+                  <td id='budget-category' contenteditable="true">{{value[0].name}}</td>
+                      <td></td>
+                  <td id='budget-amount' contenteditable="true">{{value[0].value_pcs}}</td>
+
+                  <td id='budget-value' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+
+                  <td>
+                    <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
+                    <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
+                    <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
+                  </td>
+                     {% endif %}
+                </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+<!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
+<!--      <button id="export-btn-income" class="btn btn-primary">Export Data</button>-->
+<!--    <p id="export"></p>-->
+    <br><br>
+      <div id="table-budget" class="table-editable">
+        <h3>Budget <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
+
+        <table id='cashflowTable-budget' class="table" style="table-layout: fixed;">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th></th>
+              <th>Amount</th>
+              <th>Value PLN</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for value in data %}
+            {% if value[0].is_income == 0 %}
+                {% if value[0].name == 'Cash PLN'
+                or value[0].name == 'Cash EUR'
+                or value[0].name == 'Cash USD'
+                or value[0].name == 'Account PLN'
+                or value[0].name == 'Account EUR'
+                or value[0].name == 'Credit Card'
+                or value[0].name == 'Allegro Pay'
+                %}
+                  <td id='1' contenteditable="false">{{value[0].name}}</td>
+                  <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
+                  <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+                  <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
+                  <td></td>
+                {% else %}
+
+                  <tr>
+                  <td id='1' contenteditable="true">{{value[0].name}}</td>
+                  <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
+                  <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+                  <td id='4' contenteditable="true">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
+                  <td>
+                    <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
+                    <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
+                    <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
+                  </td>
+                     {% endif %}
+                </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+  <!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
+        <button id="export-btn-budget" class="btn btn-primary">Export Data</button>
+  <!--    <p id="export"></p>-->
+      </div>
+    </div>
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+<script>
+  var $TABLE = $("#table");
+  var $BTN = $("#export-btn");
+  var $EXPORT = $("#export");
+
+function refreshValuePLN() {
+    console.log("Refreshing values...");
+    var totalEstimatedIncome = 0; // Suma szacowanych dochodów
+    var totalRealIncome = 0; // Suma rzeczywistych dochodów
+    var totalEstimatedBudget = 0; // Suma szacowanego budżetu
+    var totalRealBudget = 0; // Suma rzeczywistego budżetu
+    var totalEstimatedBalance = 0; // Saldo (szacowane)
+    var totalRealBalance = 0; // Saldo (rzeczywiste)
+
+    // Obliczanie sumy szacowanych i rzeczywistych dochodów
+    $('#cashflowTable-incomes tbody tr').each(function() {
+        var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
+        var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
+
+        totalEstimatedIncome += estimated;
+        totalRealIncome += real;
+    });
+
+    // Obliczanie sumy szacowanego i rzeczywistego budżetu
+    $('#cashflowTable-budget tbody tr').each(function() {
+        var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
+        var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
+
+        totalEstimatedBudget += estimated;
+        totalRealBudget += real;
+    });
+
+    // Obliczanie salda (szacowanego i rzeczywistego)
+    totalEstimatedBalance = totalEstimatedIncome - totalEstimatedBudget;
+    totalRealBalance = totalRealIncome - totalRealBudget;
+
+    // Aktualizacja wartości na stronie
+    $('#label-est-income').text(totalEstimatedIncome.toFixed(2)); // Dochody (szacowane)
+    $('#label-income').text(totalRealIncome.toFixed(2)); // Dochody (rzeczywiste)
+    $('#label-est-budget').text(totalEstimatedBudget.toFixed(2)); // Budżet (szacowany)
+    $('#label-budget').text(totalRealBudget.toFixed(2)); // Budżet (rzeczywisty)
+    $('#label-est-balance').text(totalEstimatedBalance >= 0 ? totalEstimatedBalance.toFixed(2) : '(' + Math.abs(totalEstimatedBalance).toFixed(2) + ')'); // Saldo (szacowane)
+    $('#label-balance').text(totalRealBalance >= 0 ? totalRealBalance.toFixed(2) : '(' + Math.abs(totalRealBalance).toFixed(2) + ')'); // Saldo (rzeczywiste)
+}
+
+
+function refreshValuesOnChange() {
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Incomes"
+    $('#cashflowTable-incomes').on('input', 'td:eq(7), td:eq(8)', function() {
+        refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
+    });
+
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Budget"
+    $('#cashflowTable-budget').on('input', 'td:eq(7), td:eq(8)', function() {
+        refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
+    });
+}
+function generateMonthOptions() {
+    var currentDate = new Date(); // Pobieramy aktualną datę
+    var currentYear = currentDate.getFullYear(); // Pobieramy aktualny rok
+    var currentMonth = currentDate.getMonth() + 1; // Pobieramy aktualny miesiąc (indeksowany od 0)
+
+    // Pętla od stycznia 2024 do aktualnego miesiąca
+    for (var year = 2024; year <= currentYear; year++) {
+      // W pierwszym roku (2024) pętla zaczyna się od stycznia
+      // W kolejnych latach zaczynamy od stycznia (miesiąc 1)
+      // Jeśli jesteśmy w aktualnym roku, kończymy na aktualnym miesiącu
+      var startMonth = (year === 2024) ? 1 : 1;
+      var endMonth = (year === currentYear) ? currentMonth : 12;
+
+      // Generujemy opcje dla miesięcy w danym roku
+      for (var month = startMonth; month <= endMonth; month++) {
+        // Tworzymy element option i dodajemy go do menu wyboru
+        var option = document.createElement('option');
+        option.value = year + '-' + (month < 10 ? '0' : '') + month; // Formatujemy wartość opcji na 'YYYY-MM'
+        option.text = (month < 10 ? '0' : '') + month + '/' + year; // Tekst opcji w formacie 'MM/YYYY'
+        document.getElementById('month-select').appendChild(option);
+      }
+    }
+  }
+
+  // Wywołujemy funkcję generującą opcje dla menu wyboru miesiąca
+  generateMonthOptions();
+
+$(document).ready(function() {
+    // Pobierz bieżący miesiąc z bazy danych i ustaw go jako domyślną wartość dla menu rozwijanego
+    $.get('/current_month', function(data) {
+        $('#month-select').val(data);
+        $('#selected-month-label').text(data); // Ustaw wartość etykiety na wybrany miesiąc
+    });
+
+    $('#month-select').change(function() {
+        var selectedMonth = $(this).val();
+        $.post('/update_month', { month: selectedMonth }, function(data) {
+            // Po zakończeniu aktualizacji przekieruj na stronę główną
+            window.location.reload();
+        });
+    });
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Incomes"
+    $('#cashflowTable-incomes').on('input', 'td:eq(2), td:eq(3)', function() {
+        refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
+    });
+
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Budget"
+    $('#cashflowTable-budget').on('input', 'td:eq(2), td:eq(3)', function() {
+        refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
+    });
+    refreshValuePLN();
+   refreshValuesOnChange();
+});
+
+$(document).on("click", ".table-add", function () {
+  const newRow = "<tr>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td contenteditable=\"false\"></td>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td contenteditable=\"true\"></td>\n" +
+          "            <td>\n" +
+          "              <button class=\"table-up btn btn-primary\" aria-label=\"Move Row Up\"><i class=\"fas fa-arrow-up\"></i></button>\n" +
+          "              <button class=\"table-down btn btn-primary\" aria-label=\"Move Row Down\"><i class=\"fas fa-arrow-down\"></i></button>\n" +
+          "              <button class=\"table-remove btn btn-danger\" aria-label=\"Remove Row\"><i class=\"fas fa-trash-alt\"></i></button>\n" +
+          "            </td>\n" +
+          "          </tr>";
+  // Wybierz odpowiednią tabelę dla dodawania wiersza
+  if ($(this).closest("#table-income").length) {
+    $(this).closest("#table-income").find("tbody").append(newRow);
+  } else if ($(this).closest("#table-budget").length) {
+    $(this).closest("#table-budget").find("tbody").append(newRow);
+  }
+  console.log("hej co tam")
+  //refreshValuePLN()
+    //refreshValuesOnChange();
+});
+
+
+$(document).on("click", ".table-remove", function () {
+    $(this).closest("tr").remove();
+  });
+
+$(document).on("click", ".table-up", function () {
+    var $row = $(this).closest("tr");
+    if ($row.index() === 0) return; // Don't go above the header
+    $row.prev().before($row);
+  });
+
+$(document).on("click", ".table-down", function () {
+    var $row = $(this).closest("tr");
+    $row.next().after($row);
+  });
+
+$BTN.click(function () {
+    // var $rows = $TABLE.find("tr:not(:hidden)");
+    // var headers = [];
+    var names = {};
+
+    console.log(document.getElementById('2'))
+    const table = document.getElementById('cashflowTable');
+    var data = [];
+
+    for(var i = 1; i < table.rows.length; i++) {
+        var row = table.rows[i];
+        var name = row.cells[0].innerText.trim();
+        var value_pcs = row.cells[1].innerText.trim();
+        var amount = row.cells[2].innerText.trim();
+        var value_pln = row.cells[3].innerText.trim();
+
+        // Check if name is unique
+        if (names[name]) {
+            alert('"' + name + '" is not unique.');
+            return;
+        }
+
+        // Adding data to table
+        var rowData = {
+            name: name,
+            value_pcs: value_pcs,
+            amount: amount,
+            value_pln: value_pln
+        };
+        data.push(rowData);
+
+        // Marking that name is already used.
+        names[name] = true;
+    }
+
+    fetch('/cashflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+  });
+</script>
 
 
 

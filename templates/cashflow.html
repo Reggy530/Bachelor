@@ -3,13 +3,14 @@
 
 
   <div class="container">
-    <h1>Insert your assets for month 0<label id="selected-month-label">0</label>/2024</h1>
-    <p>Wypisz swoje wszystkie aktywa. Proszę ja Ciebie.<strong>contenteditable</strong> and some simple jQuery you can easily create a custom editable table. No need for a robust JavaScript library anymore these days.</p>
-    <h4>Total assets <span id="totalPLN">0</span> PLN</h4>
+    <p></p>
+    <h1>Your assets for month 0<label id="selected-month-label">0</label>/2024</h1>
+    <label for="month-select">Wanna change month? <select id="month-select"></select></label>
+    <p></p>
+    <p>Wypisz swoje wszystkie aktywa. Tutaj jest jakiś dodatkowy opis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu. Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras porttitor tempor erat in venenatis. Ut semper augue id enim pharetra fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae suscipit felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat pulvinar eget est. Quisque. </p>
+    <h4>Total assets: <span id="totalPLN">0</span> PLN</h4>
 
-
-      <label for="month-select">Wanna change month? <select id="month-select"></select></label>
-
+    <p></p>
 
     <div id="table" class="table-editable">
       <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button>
@@ -20,36 +21,50 @@
             <th>Value/pcs</th>
             <th>Amount</th>
             <th>Value PLN</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-
-          <!-- This is our clonable table line -->
           {% for value in data %}
+          {% if value[0].name == 'Cash PLN'
+          or value[0].name == 'Cash EUR'
+          or value[0].name == 'Cash USD'
+          or value[0].name == 'Account PLN'
+          or value[0].name == 'Account EUR'
+          or value[0].name == 'Credit Card'
+          or value[0].name == 'Allegro Pay'
+          %}
+            <td id='1' contenteditable="false">{{value[0].name}}</td>
+            <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
+            <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+            <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
+            <td></td>
+          {% else %}
+
             <tr>
             <td id='1' contenteditable="true">{{value[0].name}}</td>
             <td id='2' contenteditable="true">{{value[0].value_pcs}}</td>
             <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
-            <td id='4' contenteditable="true">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
+            <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
             <td>
               <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
               <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
               <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
             </td>
+               {% endif %}
           </tr>
 
           {% endfor %}
-<!--          </tr>-->
         </tbody>
       </table>
     </div>
 
-    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>
+<!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
     <button id="export-btn" class="btn btn-primary">Export Data</button>
-    <p id="export"></p>
+<!--    <p id="export"></p>-->
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
 <script>
   var $TABLE = $("#table");
   var $BTN = $("#export-btn");
@@ -121,8 +136,7 @@ $(document).ready(function() {
 });
 
 $(document).on("click", ".table-add", function () {
-
-  const newRow1 = "<tr>\n" +
+  const newRow = "<tr>\n" +
           "            <td contenteditable=\"true\">edit me)</td>\n" +
           "            <td contenteditable=\"true\"></td>\n" +
           "            <td contenteditable=\"true\"></td>\n" +
@@ -133,32 +147,29 @@ $(document).on("click", ".table-add", function () {
           "              <button class=\"table-remove btn btn-danger\" aria-label=\"Remove Row\"><i class=\"fas fa-trash-alt\"></i></button>\n" +
           "            </td>\n" +
           "          </tr>";
-  //console.log(#table);
-  // Dodaj sklonowany wiersz do tabeli
-  $(this).closest("#table").find("tbody").append(newRow1);
+  $(this).closest("#table").find("tbody").append(newRow);
 });
 
 
 
-
-
-  $(document).on("click", ".table-remove", function () {
+$(document).on("click", ".table-remove", function () {
     $(this).closest("tr").remove();
   });
 
-  $(document).on("click", ".table-up", function () {
+$(document).on("click", ".table-up", function () {
     var $row = $(this).closest("tr");
     if ($row.index() === 0) return; // Don't go above the header
     $row.prev().before($row);
   });
 
-  $(document).on("click", ".table-down", function () {
+$(document).on("click", ".table-down", function () {
     var $row = $(this).closest("tr");
     $row.next().after($row);
   });
+
 $BTN.click(function () {
-    var $rows = $TABLE.find("tr:not(:hidden)");
-    var headers = [];
+    // var $rows = $TABLE.find("tr:not(:hidden)");
+    // var headers = [];
     var names = {};
 
     console.log(document.getElementById('2'))
@@ -172,13 +183,13 @@ $BTN.click(function () {
         var amount = row.cells[2].innerText.trim();
         var value_pln = row.cells[3].innerText.trim();
 
-        // Sprawdź, czy 'name' jest unikalne
+        // Check if name is unique
         if (names[name]) {
-            alert('Nazwa "' + name + '" nie jest unikalna!');
-            return; // Przerywa działanie pętli i nie wysyła danych
+            alert('"' + name + '" is not unique.');
+            return;
         }
 
-        // Dodaj dane do tablicy
+        // Adding data to table
         var rowData = {
             name: name,
             value_pcs: value_pcs,
@@ -187,7 +198,7 @@ $BTN.click(function () {
         };
         data.push(rowData);
 
-        // Zaznacz, że 'name' zostało już użyte
+        // Marking that name is already used.
         names[name] = true;
     }
 
@@ -198,38 +209,6 @@ $BTN.click(function () {
         },
         body: JSON.stringify(data)
     });
-
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log(data);
-    //   alert(data.message);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    //   alert('An error occurred while saving data');
-    // });
-
-    console.log(data)
-    // Get the headers
-    // $($rows.shift()).find("th:not(:empty)").each(function () {
-    //   headers.push($(this).text().toLowerCase());
-    // });
-    //
-    // // Turn all existing rows into a loopable array
-    // $rows.each(function () {
-    //   var $td = $(this).find("td");
-    //   var h = {};
-    //
-    //   // Use the headers from earlier to name our hash keys
-    //   headers.forEach(function (header, i) {
-    //     h[header] = $td.eq(i).text();
-    //   });
-    //
-    //   data.push(h);
-    // });
-    //
-    // // Output the result
-    // $EXPORT.text(JSON.stringify(data));
   });
 </script>
 

@@ -72,6 +72,20 @@ class Budget(db.Model):
 with app.app_context():
     db.create_all()
 
+# Przykładowe dane - kategorie budżetu i zarobków
+budget_data = {
+    'dom': 1500,
+    'samochód': 500,
+    'jedzenie': 800,
+    # Dodaj więcej kategorii budżetu
+}
+
+earnings_data = {
+    'pensja': 3000,
+    'inwestycje': 1000,
+    # Dodaj więcej kategorii zarobków
+}
+
 @app.route('/', methods=["GET", "POST"])
 def main():
 
@@ -103,7 +117,6 @@ def cashflow():
             db.session.add(asset)
         db.session.commit()
 
-
     result = db.session.execute(
         db.select(Assets).where(and_(Assets.user_id == current_user.id, Assets.period == current_user.current_period)))
 
@@ -127,24 +140,26 @@ def update_month():
     db.session.commit()
     return 'OK'
 
-@app.route('/budget')
+@app.route('/budget', methods=['GET', 'POST'])
 def budget():
     if request.method == "POST":
         data = request.get_json()
+        print(data)
         db.session.query(Budget).filter_by(user_id=current_user.id, period=current_user.current_period).delete()
         for dd in data:
             budgett = Budget(
                 user_id=current_user.id,
                 period=current_user.current_period,
                 name=dd['name'],
-                value_pcs=float(dd['value_pcs']) if dd['value_pcs'] else 1,
-                amount=float(dd['amount']) if dd['amount'] else None,
-                value_pln=float(dd['value_pln']) if dd['value_pln'] else None
-
+                is_income=dd['is_income'],
+                estimated=float(dd['estimated']) if dd['estimated'] else None,
+                amount=float(dd['amount']) if dd['amount'] else None
             )
-            print(budgett)
+            print("zmienna budgett ", budgett)
             db.session.add(budgett)
-        # db.session.commit()
+
+        db.session.commit()
+        print('test')
 
     result = db.session.execute(
         db.select(Budget).where(and_(Budget.user_id == current_user.id, Budget.period == current_user.current_period)))
@@ -223,5 +238,5 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=2134)
+    app.run(debug=True, port=2137)
 

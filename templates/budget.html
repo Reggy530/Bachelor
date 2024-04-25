@@ -9,6 +9,8 @@
     <p></p>
     <p>Po prostu wypisz swój budżet. Tutaj jest jakiś dodatkowy opis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu. Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras porttitor tempor erat in venenatis. Ut semper augue id enim pharetra fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae suscipit felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat pulvinar eget est. Quisque. </p>
 <!--    <h4>Total budget: <span id="total">0</span> PLN</h4>-->
+      <canvas id="myChartest" width="800" height="200"></canvas>
+      <canvas id="myChartreal" width="800" height="200"></canvas>
       <h4>Totals (estimated/real):</h4>
     <h4>Income: <span id="label-est-income">0</span> PLN / <span id="label-income">0</span> PLN</h4>
     <h4>Budget: <span id="label-est-budget">0</span> PLN / <span id="label-budget">0</span> PLN</h4>
@@ -18,49 +20,32 @@
     <div id="table-income" class="table-editable">
       <h3>Incomes <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
-      <table id='cashflowTable-incomes' class="table" style="table-layout: fixed;">
+      <table id='budgetTable-incomes' class="table" style="table-layout: fixed;">
         <thead>
           <tr>
             <th>Income name</th>
             <th></th>
             <th data-index="11">Estimated</th>
-            <th data-index="12">Amount</th>
+            <th data-index="12">Real amount</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {% for value in data %}
             {% if value[0].is_income %}
-                {% if value[0].name == 'Cash PLN'
-                or value[0].name == 'Cash EUR'
-                or value[0].name == 'Cash USD'
-                or value[0].name == 'Account PLN'
-                or value[0].name == 'Account EUR'
-                or value[0].name == 'Credit Card'
-                or value[0].name == 'Allegro Pay'
-                %}
-                  <td id='income-name' contenteditable="false">{{value[0].name}}</td>
+
+                  <td id='1' contenteditable="true">{{value[0].name}}</td>
                      <td></td>
-                  <td id='income-estimated' contenteditable="true">{{value[0].value_pcs}}</td>
+                  <td id='3' contenteditable="true">{{value[0].estimated}}</td>
 
-                  <td id='income-amount' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
+                  <td id='4' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
 
-                  <td></td>
-                {% else %}
-
-                  <tr>
-                  <td id='budget-category' contenteditable="true">{{value[0].name}}</td>
-                      <td></td>
-                  <td id='budget-amount' contenteditable="true">{{value[0].value_pcs}}</td>
-
-                  <td id='budget-value' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
 
                   <td>
                     <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
                     <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
                     <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
                   </td>
-                     {% endif %}
                 </tr>
             {% endif %}
           {% endfor %}
@@ -75,45 +60,31 @@
       <div id="table-budget" class="table-editable">
         <h3>Budget <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
-        <table id='cashflowTable-budget' class="table" style="table-layout: fixed;">
+        <table id='budgetTable-budget' class="table" style="table-layout: fixed;">
           <thead>
             <tr>
               <th>Category</th>
               <th></th>
-              <th>Amount</th>
-              <th>Value PLN</th>
+              <th>Estimated</th>
+              <th>Real amount</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {% for value in data %}
             {% if value[0].is_income == 0 %}
-                {% if value[0].name == 'Cash PLN'
-                or value[0].name == 'Cash EUR'
-                or value[0].name == 'Cash USD'
-                or value[0].name == 'Account PLN'
-                or value[0].name == 'Account EUR'
-                or value[0].name == 'Credit Card'
-                or value[0].name == 'Allegro Pay'
-                %}
-                  <td id='1' contenteditable="false">{{value[0].name}}</td>
-                  <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
-                  <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
-                  <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
-                  <td></td>
-                {% else %}
+                  <td id='5' contenteditable="true">{{value[0].name}}</td>
+                      <td></td>
+<!--                  <td id='6' contenteditable="false">{{value[0].value_pcs}}</td>-->
+                  <td id='7' contenteditable="true">{% if value[0].estimated %}{{ value[0].estimated }}{% endif %}</td>
+                  <td id='8' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
 
-                  <tr>
-                  <td id='1' contenteditable="true">{{value[0].name}}</td>
-                  <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
-                  <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
-                  <td id='4' contenteditable="true">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
                   <td>
                     <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
                     <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
                     <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
                   </td>
-                     {% endif %}
+
                 </tr>
             {% endif %}
           {% endfor %}
@@ -129,9 +100,49 @@
 <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
 <script>
   var $TABLE = $("#table");
-  var $BTN = $("#export-btn");
+  var $BTN = $("#export-btn-budget");
   var $EXPORT = $("#export");
+var incomeValues = [
+    // {
+    //     label: 'Dataset 1',
+    //     data: [43355], // Tablica danych z jedną wartością
+    //     backgroundColor: '#003C43',
+    //     stack: 'Stack 0',
+    // },
+    // {
+    //     label: 'Dataset 2',
+    //     data: [45335], // Tablica danych z jedną wartością
+    //     backgroundColor: '#003C43',
+    //     stack: 'Stack 0',
+    // }
+];
+var budgetValues = [];
+var datasetCombined = [];
+const labels = [''];
+const baseBackgroundColors = ['#003C43', '#135D66', '#77B0AA', '#E3FEF7'];
+const budgetRealColors = ['#FF204E', '#A0153E','#5D0E41','#00224D'];
+const budgetEstimatedColors = ['#F5EEE6', '#FFF8E3','#F3D7CA','#E6A4B4']
+  function addDataset(label, data, stack, type){
+      let backgroundColor = baseBackgroundColors[incomeValues.length % baseBackgroundColors.length];
+      if (typeof data === 'number') {
+        data = [data];
+    }
+      if(type===1 && stack==='Stack 0')
+         backgroundColor = budgetEstimatedColors[budgetValues.length % baseBackgroundColors.length];
+      else if(type===1 && stack==='Stack 1')
+        backgroundColor = budgetRealColors[budgetValues.length % baseBackgroundColors.length];
 
+      let newDataset = {
+          type:'bar',
+          label:label,
+          data:data,
+          backgroundColor: backgroundColor,
+          stack:stack,
+      }
+      if(type === 0)
+          incomeValues.push(newDataset);
+      else budgetValues.push(newDataset);
+  }
 function refreshValuePLN() {
     console.log("Refreshing values...");
     var totalEstimatedIncome = 0; // Suma szacowanych dochodów
@@ -140,25 +151,41 @@ function refreshValuePLN() {
     var totalRealBudget = 0; // Suma rzeczywistego budżetu
     var totalEstimatedBalance = 0; // Saldo (szacowane)
     var totalRealBalance = 0; // Saldo (rzeczywiste)
-
+    //wyczyszczenie tablicy przed dodawaniem nowych wartości
+    incomeValues.splice(0, incomeValues.length);
+    budgetValues.splice(0, budgetValues.length);
     // Obliczanie sumy szacowanych i rzeczywistych dochodów
-    $('#cashflowTable-incomes tbody tr').each(function() {
+    $('#budgetTable-incomes tbody tr').each(function() {
         var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
         var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
+        var name = $(this).find('td:eq(0)').text()
 
+        //console.log(name, estimated, real);
         totalEstimatedIncome += estimated;
         totalRealIncome += real;
+        //console.log(name, estimated);
+        addDataset(name+' (estimated)', estimated, 'Stack 0', 0);
+        addDataset(name+ ' (real)', real, 'Stack 1', 0);
+
     });
 
     // Obliczanie sumy szacowanego i rzeczywistego budżetu
-    $('#cashflowTable-budget tbody tr').each(function() {
+    $('#budgetTable-budget tbody tr').each(function() {
         var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
         var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
-
+        var name = $(this).find('td:eq(0)').text() || 0;
         totalEstimatedBudget += estimated;
         totalRealBudget += real;
+        addDataset(name+' (estimated)', estimated, 'Stack 0', 1);
+        addDataset(name+' (real)', real, 'Stack 1', 1);
+
     });
 
+
+    datasetCombined = [incomeValues, budgetValues];
+    console.log(datasetCombined)
+    myChartEst.update();
+    myChartReal.update();
     // Obliczanie salda (szacowanego i rzeczywistego)
     totalEstimatedBalance = totalEstimatedIncome - totalEstimatedBudget;
     totalRealBalance = totalRealIncome - totalRealBudget;
@@ -175,12 +202,14 @@ function refreshValuePLN() {
 
 function refreshValuesOnChange() {
     // Obsługa zdarzenia wprowadzania danych w tabeli "Incomes"
-    $('#cashflowTable-incomes').on('input', 'td:eq(7), td:eq(8)', function() {
+    $('#budgetTable-incomes').on('input', function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
+        //labels.push(2137);
+
     });
 
     // Obsługa zdarzenia wprowadzania danych w tabeli "Budget"
-    $('#cashflowTable-budget').on('input', 'td:eq(7), td:eq(8)', function() {
+    $('#budgetTable-budget').on('input', function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
     });
 }
@@ -278,18 +307,16 @@ $(document).on("click", ".table-down", function () {
   });
 
 $BTN.click(function () {
-    // var $rows = $TABLE.find("tr:not(:hidden)");
-    // var headers = [];
     var names = {};
-
-    console.log(document.getElementById('2'))
-    const table = document.getElementById('cashflowTable');
+    const table = document.getElementById('budgetTable-incomes');
+    const table2 = document.getElementById('budgetTable-budget');
     var data = [];
 
+    // pushing data from incomes
     for(var i = 1; i < table.rows.length; i++) {
         var row = table.rows[i];
         var name = row.cells[0].innerText.trim();
-        var value_pcs = row.cells[1].innerText.trim();
+        var is_income = 1;
         var amount = row.cells[2].innerText.trim();
         var value_pln = row.cells[3].innerText.trim();
 
@@ -302,17 +329,45 @@ $BTN.click(function () {
         // Adding data to table
         var rowData = {
             name: name,
-            value_pcs: value_pcs,
-            amount: amount,
-            value_pln: value_pln
+            is_income: is_income,
+            estimated: amount,
+            amount: value_pln
         };
         data.push(rowData);
-
+        console.log(rowData);
         // Marking that name is already used.
         names[name] = true;
     }
 
-    fetch('/cashflow', {
+    // pushing data from budget
+    for(var j = 1; j < table2.rows.length; j++) {
+
+        var row2 = table2.rows[j];
+        var name2 = row2.cells[0].innerText.trim();
+        var is_income2 = 0;
+        var amount2 = row2.cells[2].innerText.trim();
+        var value_pln2 = row2.cells[3].innerText.trim();
+
+        // Check if name is unique
+        if (names[name2]) {
+            alert('"' + name2 + '" is not unique.');
+            return;
+        }
+
+        // Adding data to table
+        var rowData2 = {
+            name: name2,
+            is_income: is_income2,
+            estimated: amount2,
+            amount: value_pln2
+        };
+        data.push(rowData2);
+        console.log(rowData2);
+        // Marking that name is already used.
+        names[name] = true;
+    }
+
+    fetch('/budget', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -320,7 +375,114 @@ $BTN.click(function () {
         body: JSON.stringify(data)
     });
   });
+
+        // Funkcja do generowania losowych danych
+function generateRandomData(count, min, max) {
+            return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        // Ustawienia wykresu
+const DATA_COUNT = 7;
+const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+
+
+
+const dataEst = {
+        labels: labels,
+        datasets: incomeValues,
+    //     datasets: [...incomeValues],
+    // //     datasets: [
+    // //             {
+    // //                 label: 'Dataset 1',
+    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
+    // //                 backgroundColor: '#003C43',
+    // //                 stack: 'Stack 0',
+    // //             },
+    // //             {
+    // //                 label: 'Dataset 2',
+    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
+    // //                 backgroundColor: '#135D66',
+    // //                 stack: 'Stack 0',
+    // //             },
+    // //             {
+    // //                 label: 'Dataset 3',
+    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
+    // //                 backgroundColor: '#77B0AA',
+    // //                 stack: 'Stack 1',
+    // //             },
+    // //             {
+    // //                 label: 'Dataset 4',
+    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
+    // //                 backgroundColor: '#E3FEF7',
+    // //                 stack: 'Stack 1',
+    // //             },
+    // //
+    // //         ]
+        };
+
+const dataReal ={
+  labels: labels,
+  datasets: budgetValues,
+}
+const configEst = {
+            type: 'bar',
+            data: dataEst,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Incomes'
+                    },
+                },
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                },
+                indexAxis: 'y',
+            }
+        };
+
+const configReal = {
+            type: 'bar',
+            data: dataReal,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Budget'
+                    },
+                },
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                },
+                indexAxis: 'y',
+            }
+        };
+
+        // Tworzenie wykresu
+        var ctxest = document.getElementById('myChartest').getContext('2d');
+        var ctxreal = document.getElementById('myChartreal').getContext('2d');
+        var myChartEst = new Chart(ctxest, configEst);
+        var myChartReal = new Chart(ctxreal, configReal);
 </script>
+
 
 
 

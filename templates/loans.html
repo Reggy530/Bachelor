@@ -1,10 +1,355 @@
-
 {% include "header.html" %}
 
+<div class="container">
+  <h1>Dodaj swoje kredyty.</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group mb-3">
+        <span class="input-group-text"></span>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInputGroup4"
+            placeholder="Start DD-MM-YYYY"
+            value="02-04-2005"
+          />
+          <label for="floatingInputGroup4">Start DD-MM-YYYY</label>
+        </div>
+        <span class="input-group-text">%</span>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInputGroup3"
+            placeholder="Oprocentowanie"
+            value="5"
+          />
+          <label for="floatingInputGroup3">Oprocentowanie</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="input-group mb-3">
+        <span class="input-group-text"></span>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInputGroup2"
+            placeholder="Ilość rat"
+            value="24"
+          />
+          <label for="floatingInputGroup2">Ilość rat</label>
+        </div>
+        <span class="input-group-text">PLN</span>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInputGroup1"
+            placeholder="Kwota"
+            value="21370"
+          />
+          <label for="floatingInputGroup1">Kwota</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group mb-3">
+        <span class="input-group-text"></span>
+        <div class="form-floating">
+          <select class="form-select" id="floatingInputGroup5">
+            <option selected disabled>Wybierz rodzaj odsetek</option>
+            <option value="malejące">Odsetki malejące</option>
+            <option value="stałe">Odsetki stałe</option>
+          </select>
+          <label for="floatingInputGroup5">Rodzaj odsetek</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-secondary">Podgląd</button>
+        <button type="button" id="insercik" class="btn btn-primary">
+          Wprowadź
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="table" class="table-editable">
+    <table id="loansTable" class="table" style="table-layout: fixed">
+      <thead>
+        <tr>
+          <th>Start time</th>
+          <th>Interest</th>
+          <th>Installments</th>
+          <th>Amount</th>
+          <th>Type of installments</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for value in data %}
+        <tr>
+    <td id="1" contenteditable="false">{{value[0].start_date}}</td>
+    <td id="2" contenteditable="false">{{value[0].interest}}</td>
+    <td id="3" contenteditable="false">{{value[0].amount_of_installments}}</td>
+    <td id="4" contenteditable="false">{{value[0].loan_value}}</td>
+    <td id="5" contenteditable="false">{{value[0].type}}</td>
+    <td>
+        <button class="table-remove btn btn-danger" aria-label="Remove Row" data-id="{{value[0].loan_id}}">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </td>
+</tr>
+        {% endfor %}}
+      </tbody>
+    </table>
+  </div>
+  <p></p>
+  <div id="previewDiv"></div>
 
+  <script>
+    console.log("marker");
+    const repaymentPlan = [];
+    function generateRepaymentPlan(interestRate, numberOfPayments, amount) {
+      console.log("uruchamiam liczenie rat stałych");
+      repaymentPlan.splice(0, repaymentPlan.length);
+      const monthlyInterestRate = interestRate / 12 / 100;
+      console.log(monthlyInterestRate);
+      const monthlyPayment =
+        (amount * monthlyInterestRate) /
+        (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+      console.log(monthlyPayment);
+      let plan = "<h3>Plan spłaty kredytu:</h3>";
+      let remainingAmount = amount;
 
-  <h1><center>Podstrona. Hurra! 🌞 </h1>
+      for (let i = 0; i < numberOfPayments; i++) {
+        const interestPayment = remainingAmount * monthlyInterestRate;
+        const capitalPayment = monthlyPayment - interestPayment;
+        remainingAmount -= capitalPayment;
+        repaymentPlan.push({
+          paymentNumber: i + 1,
+          interestPayment: interestPayment,
+          capitalPayment: capitalPayment,
+          remainingAmount: remainingAmount,
+        });
+      }
+      console.log(repaymentPlan);
+      return 0;
+    }
 
+    function generateRepaymentPlan2(interestRate, numberOfPayments, amount) {
+      console.log("uruchamiam liczenie rat malejących");
+      repaymentPlan.splice(0, repaymentPlan.length);
+      const monthlyInterestRate = interestRate / 12 / 100;
+      const monthlyCapitalPayment = amount / numberOfPayments;
 
+      let remainingAmount = amount;
 
-{% include "footer.html" %}
+      for (let i = 0; i < numberOfPayments; i++) {
+        const interestPayment = remainingAmount * monthlyInterestRate;
+        const totalPayment = monthlyCapitalPayment + interestPayment;
+        remainingAmount -= monthlyCapitalPayment;
+        repaymentPlan.push({
+          paymentNumber: i + 1,
+          capitalPayment: monthlyCapitalPayment,
+          interestPayment: interestPayment,
+          totalPayment: totalPayment,
+          remainingAmount: remainingAmount,
+        });
+      }
+      console.log(repaymentPlan);
+      return 0;
+    }
+    document
+      .querySelector(".btn-secondary")
+      .addEventListener("click", function () {
+        const startDate = document.getElementById("floatingInputGroup4").value;
+        const interestRate = parseFloat(
+          document.getElementById("floatingInputGroup3").value
+        );
+        const numberOfPayments = parseInt(
+          document.getElementById("floatingInputGroup2").value
+        );
+        const amount = parseFloat(
+          document.getElementById("floatingInputGroup1").value
+        );
+        // Generowanie planu spłaty
+
+        if (
+          isNaN(interestRate) ||
+          isNaN(numberOfPayments) ||
+          isNaN(amount) ||
+          interestRate <= 0 ||
+          numberOfPayments <= 0 ||
+          amount <= 0
+        ) {
+          alert(
+            "Wprowadź poprawne dane: Oprocentowanie, Ilość rat i Kwota muszą być liczbami większymi od zera."
+          );
+          return; // Przerwij funkcję w przypadku błędnych danych
+        }
+
+        // Walidacja daty w formacie dd-mm-yyyy
+        const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex dla daty w formacie dd-mm-yyyy
+        if (!dateRegex.test(startDate)) {
+          alert("Wprowadź poprawny format daty: dd-mm-yyyy.");
+          return; // Przerwij funkcję w przypadku nieprawidłowego formatu daty
+        }
+
+        const selectedOption = document.getElementById(
+          "floatingInputGroup5"
+        ).value;
+        if (selectedOption === "malejące") {
+          generateRepaymentPlan2(interestRate, numberOfPayments, amount);
+        } else if (selectedOption === "stałe") {
+          generateRepaymentPlan(interestRate, numberOfPayments, amount);
+        } else {
+          alert("Proszę wybrać rodzaj odsetek.");
+        }
+      });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("ehhh");
+      // Nasłuchiwanie kliknięcia na przycisk "Wprowadź"
+      document
+        .querySelector(".btn-primary")
+        .addEventListener("click", function () {
+          // Pobieranie danych
+          const startDate = document.getElementById(
+            "floatingInputGroup4"
+          ).value;
+          const interestRate = parseFloat(
+            document.getElementById("floatingInputGroup3").value
+          );
+          const numberOfPayments = parseInt(
+            document.getElementById("floatingInputGroup2").value
+          );
+          const amount = parseFloat(
+            document.getElementById("floatingInputGroup1").value
+          );
+          const selectedOption = document.getElementById('floatingInputGroup5').value;
+          console.log("selected option: "+ selectedOption)
+           let typeOfInstallments;
+              if (selectedOption === 'malejące') {
+                  typeOfInstallments = 'mal';
+              } else if (selectedOption === 'stałe') {
+                  typeOfInstallments = 'st';
+              } else {
+                  // Obsługa przypadku, gdy nie wybrano żadnej opcji lub wartość jest inna niż 'malejące' lub 'stałe'
+                  typeOfInstallments = ''; // Tutaj możesz wpisać domyślną wartość lub obsługę błędu
+              }
+
+          // Walidacja danych
+          if (
+            isNaN(interestRate) ||
+            isNaN(numberOfPayments) ||
+            isNaN(amount) ||
+            interestRate <= 0 ||
+            numberOfPayments <= 0 ||
+            amount <= 0
+          ) {
+            alert(
+              "Wprowadź poprawne dane: Oprocentowanie, Ilość rat i Kwota muszą być liczbami większymi od zera."
+            );
+            return; // Przerwij funkcję w przypadku błędnych danych
+          }
+
+          // Walidacja daty w formacie dd-mm-yyyy
+          const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex dla daty w formacie dd-mm-yyyy
+          if (!dateRegex.test(startDate)) {
+            alert("Wprowadź poprawny format daty: dd-mm-yyyy.");
+            return; // Przerwij funkcję w przypadku nieprawidłowego formatu daty
+          }
+
+          console.log(startDate, interestRate, numberOfPayments, amount);
+
+          // Tutaj można wywołać funkcję do generowania planu spłaty lub inne operacje na danych
+          // np. generateRepaymentPlan(interestRate, numberOfPayments, amount);
+          var dataToPush = []
+          const data = {
+            start: startDate,
+            interest: interestRate,
+            installments: numberOfPayments,
+            amount: amount,
+            typeOfInstallments: typeOfInstallments,
+          };
+          dataToPush.push(data);
+          // Przygotowanie danych do wysłania jako formularz POST
+          const formData = new FormData();
+          formData.append("data", JSON.stringify(data));
+
+          // Wysłanie danych za pomocą metody POST
+          fetch("/loans", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToPush)
+          })
+          // Utworzenie nowego wiersza w tabeli HTML
+            const tableBody = document.querySelector("#loansTable tbody");
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${startDate}</td>
+                <td>${interestRate}</td>
+                <td>${numberOfPayments}</td>
+                <td>${amount}</td>
+                <td>${typeOfInstallments}</td>
+                <td>
+                I'm new ✨✨✨
+                </td>
+            `;
+
+            // Wyczyść wartości pól formularza
+            document.getElementById("floatingInputGroup4").value = "";
+            document.getElementById("floatingInputGroup3").value = "";
+            document.getElementById("floatingInputGroup2").value = "";
+            document.getElementById("floatingInputGroup1").value = "";
+            document.getElementById('floatingInputGroup5').value = "";
+        });
+    });
+
+document.addEventListener("click", function(event) {
+    if (event.target.classList.contains("table-remove")) {
+      console.log('teraz wyswietlam id');
+      if(confirm("na pewno?")) {
+        var id = event.target.dataset.id; // Pobierz identyfikator rekordu z atrybutu data-id przycisku usuwania
+        console.log(id);
+        // Wyślij żądanie DELETE do serwera, aby usunąć rekord
+        fetch("/delete_record", {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({id: id})
+        })
+        event.target.closest("tr").remove();
+      }
+    }
+});
+
+    // Funkcja do generowania planu spłaty
+
+    //console.log(repaymentPlan);
+
+    // return 0;
+    // console.log("todo tutaj mamy")
+    // return 'not yet developed'
+
+    // dev only
+    // let interestRate = 5;
+    // let numberOfPayments = 10;
+    // let amount = 10000;
+    // console.log("borjar?");
+    // generateRepaymentPlan(interestRate, numberOfPayments, amount);
+    // generateRepaymentPlan2(interestRate, numberOfPayments, amount);
+    // dev only
+  </script>
+
+  {% include "footer.html" %}
+</div>

@@ -1,97 +1,153 @@
-
 {% include "header.html" %}
 
+<div class="container">
+  <p></p>
+  <h1>
+    Your assets for month 0<label id="selected-month-label">0</label>/2024
+  </h1>
 
-  <div class="container">
-    <p></p>
-    <h1>Your assets for month 0<label id="selected-month-label">0</label>/2024</h1>
-    <label for="month-select">Wanna change month? <select id="month-select"></select></label>
-    <p></p>
-    <p>Wypisz swoje wszystkie aktywa. Tutaj jest jakiś dodatkowy opis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu. Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras porttitor tempor erat in venenatis. Ut semper augue id enim pharetra fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae suscipit felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat pulvinar eget est. Quisque. </p>
-    <h4>Total assets: <span id="totalPLN">0</span> PLN</h4>
-
-    <p></p>
-
-    <div id="table" class="table-editable">
-      <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button>
-      <table id='cashflowTable' class="table" style="table-layout: fixed;">
-        <thead>
-          <tr>
-            <th>Asset</th>
-            <th>Value/pcs</th>
-            <th>Amount</th>
-            <th>Value PLN</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for value in data %}
-          {% if value[0].name == 'Cash PLN'
-          or value[0].name == 'Cash EUR'
-          or value[0].name == 'Cash USD'
-          or value[0].name == 'Account PLN'
-          or value[0].name == 'Account EUR'
-          or value[0].name == 'Credit Card'
-          or value[0].name == 'Allegro Pay'
-          %}
-            <td id='1' contenteditable="false">{{value[0].name}}</td>
-            <td id='2' contenteditable="false">{{value[0].value_pcs}}</td>
-            <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
-            <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
-            <td></td>
-          {% else %}
-
-            <tr>
-            <td id='1' contenteditable="true">{{value[0].name}}</td>
-            <td id='2' contenteditable="true">{{value[0].value_pcs}}</td>
-            <td id='3' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
-            <td id='4' contenteditable="false">{% if value[0].value_pln %}{{ value[0].amount }}{% endif %}</td>
-            <td>
-              <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>
-              <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>
-              <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>
-            </td>
-               {% endif %}
-          </tr>
-
-          {% endfor %}
-        </tbody>
-      </table>
+  <p></p>
+  <div class="containerrr">
+    <div class="left-content">
+      <div class="form-floating">
+        <select
+          class="form-select"
+          id="month-select"
+          aria-label="Select month"
+        ></select>
+        <label for="month-select">Wanna change month?</label>
+      </div>
+      <p></p>
+      <p>
+        Wypisz swoje wszystkie aktywa. Tutaj jest jakiś dodatkowy opis. Lorem
+        ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada
+        pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam
+        at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet
+        condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu.
+        Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras
+        porttitor tempor erat in venenatis. Ut semper augue id enim pharetra
+        fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae
+        suscipit felis. Interdum et malesuada fames ac ante ipsum primis in
+        faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat
+        pulvinar eget est. Quisque.
+      </p>
     </div>
-
-<!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
-    <button id="export-btn" class="btn btn-primary">Export Data</button>
-<!--    <p id="export"></p>-->
+    <div class="right-content">
+      <canvas id="cashflowChart" width="20" height="20"></canvas>
+    </div>
   </div>
+  <h4>Total assets: <span id="totalPLN">0</span> PLN</h4>
+
+  <p></p>
+
+  <div id="table" class="table-editable">
+    <button class="table-add btn btn-success" aria-label="Add Row">
+      <i class="fas fa-plus"></i>
+    </button>
+    <table id="cashflowTable" class="table" style="table-layout: fixed">
+      <thead>
+        <tr>
+          <th>Asset</th>
+          <th>Value/pcs</th>
+          <th>Amount</th>
+          <th>Value PLN</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for value in data %} {% if value[0].name == 'Cash PLN' or
+        value[0].name == 'Cash EUR' or value[0].name == 'Cash USD' or
+        value[0].name == 'Account PLN' or value[0].name == 'Account EUR' or
+        value[0].name == 'Credit Card' or value[0].name == 'Allegro Pay' %}
+        <td id="1" contenteditable="false">{{value[0].name}}</td>
+        <td id="2" contenteditable="false">{{value[0].value_pcs}}</td>
+        <td id="3" contenteditable="true">
+          {% if value[0].amount %}{{ value[0].amount }}{% endif %}
+        </td>
+        <td id="4" contenteditable="false">
+          {% if value[0].value_pln %}{{ value[0].amount }}{% endif %}
+        </td>
+        <td></td>
+        {% else %}
+
+        <tr>
+          <td id="1" contenteditable="true">{{value[0].name}}</td>
+          <td id="2" contenteditable="true">{{value[0].value_pcs}}</td>
+          <td id="3" contenteditable="true">
+            {% if value[0].amount %}{{ value[0].amount }}{% endif %}
+          </td>
+          <td id="4" contenteditable="false">
+            {% if value[0].value_pln %}{{ value[0].amount }}{% endif %}
+          </td>
+          <td>
+            <button class="table-up btn btn-primary" aria-label="Move Row Up">
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button
+              class="table-down btn btn-primary"
+              aria-label="Move Row Down"
+            >
+              <i class="fas fa-arrow-down"></i>
+            </button>
+            <button class="table-remove btn btn-danger" aria-label="Remove Row">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+          {% endif %}
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
+  <button id="export-btn" class="btn btn-primary">Export Data</button>
+  <!--    <p id="export"></p>-->
+</div>
 
 <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
 <script>
   var $TABLE = $("#table");
   var $BTN = $("#export-btn");
   var $EXPORT = $("#export");
-
-   function refreshValuePLN() {
+  const chartLabels = [];
+  const chartData = [];
+  function refreshValuePLN() {
     var totalPLN = 0; // Inicjujemy sumę wartości PLN
+    chartLabels.splice(0, chartLabels.length);
+    chartData.splice(0, chartData.length);
     // Iterujemy przez każdy wiersz w tabeli
-    $('#cashflowTable tbody tr').each(function() {
+    $("#cashflowTable tbody tr").each(function () {
       var $row = $(this);
       // Pobieramy wartości z kolumn "Value/pcs" i "Amount" dla danego wiersza
-      var valuePcs = parseFloat($row.find('td:eq(1)').text()) || 0; // wartość domyślna 0, jeśli wartość nie jest liczbą
-      var amount = parseFloat($row.find('td:eq(2)').text()) || 0;
+      var name = $row.find("td:eq(0)").text();
+      var valuePcs = parseFloat($row.find("td:eq(1)").text()) || 0; // wartość domyślna 0, jeśli wartość nie jest liczbą
+      var amount = parseFloat($row.find("td:eq(2)").text()) || 0;
       // Obliczamy wartość PLN i aktualizujemy kolumnę "Value PLN" w danym wierszu
       var valuePLN = valuePcs * amount;
-      $row.find('td:eq(3)').text(valuePLN.toFixed(2)); // Zaokrąglamy do dwóch miejsc po przecinku
+      $row.find("td:eq(3)").text(valuePLN.toFixed(2)); // Zaokrąglamy do dwóch miejsc po przecinku
       totalPLN += valuePLN; // Dodajemy wartość PLN do sumy
+      console.log(name, valuePcs, amount, totalPLN);
+      chartLabels.push(name);
+      chartData.push(valuePLN);
     });
-    $('#totalPLN').text(totalPLN.toFixed(2)); // Aktualizujemy wartość Total PLN
+
+    $("#totalPLN").text(totalPLN.toFixed(2)); // Aktualizujemy wartość Total PLN
+    myChart.update();
+    console.log(chartData, chartLabels);
   }
 
-// Wywołujemy funkcję refreshValuePLN() po zmianie wartości w kolumnach "Value/pcs" lub "Amount"
-$('#cashflowTable').on('input', 'tbody td:nth-child(2), tbody td:nth-child(3)', function() {
-  refreshValuePLN();
-});
+  // Wywołujemy funkcję refreshValuePLN() po zmianie wartości w kolumnach "Value/pcs" lub "Amount"
+  $("#cashflowTable").on(
+    "input",
+    "tbody td:nth-child(2), tbody td:nth-child(3)",
+    function () {
+      refreshValuePLN();
+    }
+  );
 
-function generateMonthOptions() {
+  function generateMonthOptions() {
     var currentDate = new Date(); // Pobieramy aktualną datę
     var currentYear = currentDate.getFullYear(); // Pobieramy aktualny rok
     var currentMonth = currentDate.getMonth() + 1; // Pobieramy aktualny miesiąc (indeksowany od 0)
@@ -101,16 +157,16 @@ function generateMonthOptions() {
       // W pierwszym roku (2024) pętla zaczyna się od stycznia
       // W kolejnych latach zaczynamy od stycznia (miesiąc 1)
       // Jeśli jesteśmy w aktualnym roku, kończymy na aktualnym miesiącu
-      var startMonth = (year === 2024) ? 1 : 1;
-      var endMonth = (year === currentYear) ? currentMonth : 12;
+      var startMonth = year === 2024 ? 1 : 1;
+      var endMonth = year === currentYear ? currentMonth : 12;
 
       // Generujemy opcje dla miesięcy w danym roku
       for (var month = startMonth; month <= endMonth; month++) {
         // Tworzymy element option i dodajemy go do menu wyboru
-        var option = document.createElement('option');
-        option.value = year + '-' + (month < 10 ? '0' : '') + month; // Formatujemy wartość opcji na 'YYYY-MM'
-        option.text = (month < 10 ? '0' : '') + month + '/' + year; // Tekst opcji w formacie 'MM/YYYY'
-        document.getElementById('month-select').appendChild(option);
+        var option = document.createElement("option");
+        option.value = year + "-" + (month < 10 ? "0" : "") + month; // Formatujemy wartość opcji na 'YYYY-MM'
+        option.text = (month < 10 ? "0" : "") + month + "/" + year; // Tekst opcji w formacie 'MM/YYYY'
+        document.getElementById("month-select").appendChild(option);
       }
     }
   }
@@ -118,100 +174,120 @@ function generateMonthOptions() {
   // Wywołujemy funkcję generującą opcje dla menu wyboru miesiąca
   generateMonthOptions();
 
-$(document).ready(function() {
+  $(document).ready(function () {
     // Pobierz bieżący miesiąc z bazy danych i ustaw go jako domyślną wartość dla menu rozwijanego
-    $.get('/current_month', function(data) {
-        $('#month-select').val(data);
-        $('#selected-month-label').text(data); // Ustaw wartość etykiety na wybrany miesiąc
+    $.get("/current_month", function (data) {
+      $("#month-select").val(data);
+      $("#selected-month-label").text(data); // Ustaw wartość etykiety na wybrany miesiąc
     });
 
-    $('#month-select').change(function() {
-        var selectedMonth = $(this).val();
-        $.post('/update_month', { month: selectedMonth }, function(data) {
-            // Po zakończeniu aktualizacji przekieruj na stronę główną
-            window.location.reload();
-        });
+    $("#month-select").change(function () {
+      var selectedMonth = $(this).val();
+      $.post("/update_month", { month: selectedMonth }, function (data) {
+        // Po zakończeniu aktualizacji przekieruj na stronę główną
+        window.location.reload();
+      });
     });
     refreshValuePLN();
-});
+  });
 
-$(document).on("click", ".table-add", function () {
-  const newRow = "<tr>\n" +
-          "            <td contenteditable=\"true\">edit me)</td>\n" +
-          "            <td contenteditable=\"true\"></td>\n" +
-          "            <td contenteditable=\"true\"></td>\n" +
-          "            <td contenteditable=\"true\"></td>\n" +
-          "            <td>\n" +
-          "              <button class=\"table-up btn btn-primary\" aria-label=\"Move Row Up\"><i class=\"fas fa-arrow-up\"></i></button>\n" +
-          "              <button class=\"table-down btn btn-primary\" aria-label=\"Move Row Down\"><i class=\"fas fa-arrow-down\"></i></button>\n" +
-          "              <button class=\"table-remove btn btn-danger\" aria-label=\"Remove Row\"><i class=\"fas fa-trash-alt\"></i></button>\n" +
-          "            </td>\n" +
-          "          </tr>";
-  $(this).closest("#table").find("tbody").append(newRow);
-});
+  $(document).on("click", ".table-add", function () {
+    const newRow =
+      "<tr>\n" +
+      '            <td contenteditable="true">edit me)</td>\n' +
+      '            <td contenteditable="true"></td>\n' +
+      '            <td contenteditable="true"></td>\n' +
+      '            <td contenteditable="true"></td>\n' +
+      "            <td>\n" +
+      '              <button class="table-up btn btn-primary" aria-label="Move Row Up"><i class="fas fa-arrow-up"></i></button>\n' +
+      '              <button class="table-down btn btn-primary" aria-label="Move Row Down"><i class="fas fa-arrow-down"></i></button>\n' +
+      '              <button class="table-remove btn btn-danger" aria-label="Remove Row"><i class="fas fa-trash-alt"></i></button>\n' +
+      "            </td>\n" +
+      "          </tr>";
+    $(this).closest("#table").find("tbody").append(newRow);
+  });
 
-
-
-$(document).on("click", ".table-remove", function () {
+  $(document).on("click", ".table-remove", function () {
     $(this).closest("tr").remove();
   });
 
-$(document).on("click", ".table-up", function () {
+  $(document).on("click", ".table-up", function () {
     var $row = $(this).closest("tr");
     if ($row.index() === 0) return; // Don't go above the header
     $row.prev().before($row);
   });
 
-$(document).on("click", ".table-down", function () {
+  $(document).on("click", ".table-down", function () {
     var $row = $(this).closest("tr");
     $row.next().after($row);
   });
 
-$BTN.click(function () {
+  $BTN.click(function () {
     // var $rows = $TABLE.find("tr:not(:hidden)");
     // var headers = [];
     var names = {};
 
-    console.log(document.getElementById('2'))
-    const table = document.getElementById('cashflowTable');
+    console.log(document.getElementById("2"));
+    const table = document.getElementById("cashflowTable");
     var data = [];
 
-    for(var i = 1; i < table.rows.length; i++) {
-        var row = table.rows[i];
-        var name = row.cells[0].innerText.trim();
-        var value_pcs = row.cells[1].innerText.trim();
-        var amount = row.cells[2].innerText.trim();
-        var value_pln = row.cells[3].innerText.trim();
+    for (var i = 1; i < table.rows.length; i++) {
+      var row = table.rows[i];
+      var name = row.cells[0].innerText.trim();
+      var value_pcs = row.cells[1].innerText.trim();
+      var amount = row.cells[2].innerText.trim();
+      var value_pln = row.cells[3].innerText.trim();
 
-        // Check if name is unique
-        if (names[name]) {
-            alert('"' + name + '" is not unique.');
-            return;
-        }
+      // Check if name is unique
+      if (names[name]) {
+        alert('"' + name + '" is not unique.');
+        return;
+      }
 
-        // Adding data to table
-        var rowData = {
-            name: name,
-            value_pcs: value_pcs,
-            amount: amount,
-            value_pln: value_pln
-        };
-        data.push(rowData);
+      // Adding data to table
+      var rowData = {
+        name: name,
+        value_pcs: value_pcs,
+        amount: amount,
+        value_pln: value_pln,
+      };
+      data.push(rowData);
 
-        // Marking that name is already used.
-        names[name] = true;
+      // Marking that name is already used.
+      names[name] = true;
     }
 
-    fetch('/cashflow', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+    fetch("/cashflow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     });
   });
+  const data = {
+    labels: chartLabels,
+    datasets: [
+      {
+        //label: chartLabels,
+        data: chartData,
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          //  'rgb(54, 162, 235)',
+          "rgb(255, 205, 86)",
+        ],
+        hoverOffset: 43,
+      },
+    ],
+  };
+
+  const config = {
+    type: "doughnut",
+    data: data,
+  };
+
+  var ctx = document.getElementById("cashflowChart").getContext("2d");
+  var myChart = new Chart(ctx, config);
 </script>
-
-
 
 {% include "footer.html" %}

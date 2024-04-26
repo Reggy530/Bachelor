@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint, and_
 from datetime import datetime, timedelta
@@ -15,24 +15,26 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-default_cashflow_entries = [['Allegro', 'Borjar'],['Faglar', 'Hunja']]
+default_cashflow_entries = [['Allegro', 'Borjar'], ['Faglar', 'Hunja']]
+
 
 # Create a user_loader callback
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
 
-#Create admin-only decorator
+
+# Create admin-only decorator
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        #If id is not 1 then return abort with 403 error
+        # If id is not 1 then return abort with 403 error
         if current_user.id != 1:
             return abort(403)
-        #Otherwise continue with the route function
+        # Otherwise continue with the route function
         return f(*args, **kwargs)
-    return decorated_function
 
+    return decorated_function
 
 
 class User(UserMixin, db.Model):
@@ -42,6 +44,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     current_period = db.Column(db.Integer, default=4)
+
 
 class Assets(db.Model):
     __tablename__ = 'assets'
@@ -56,6 +59,7 @@ class Assets(db.Model):
         UniqueConstraint('name', 'period', 'user_id', name='_name_period_uc'),
     )
 
+
 class Budget(db.Model):
     __tablename__ = 'budget'
     budget_id = db.Column(db.Integer, primary_key=True)
@@ -68,6 +72,18 @@ class Budget(db.Model):
     __table_args__ = (
         UniqueConstraint('name', 'period', 'user_id', name='unique_budget'),
     )
+
+
+class Loans(db.Model):
+    __tablename__ = 'loans'
+    loan_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    start_date = db.Column(db.String(12))
+    interest = db.Column(db.Float)
+    amount_of_installments = db.Column(db.Integer)
+    loan_value = db.Column(db.Float)
+    type = db.Column(db.String(5))
+
 
 with app.app_context():
     db.create_all()
@@ -86,17 +102,19 @@ earnings_data = {
     # Dodaj więcej kategorii zarobków
 }
 
+
 @app.route('/', methods=["GET", "POST"])
 def main():
-
     print(current_user)
     return render_template('index.html', user=current_user, current_page='index.html')
+
 
 @app.route('/current_month', methods=['GET'])
 def current_month():
     # Pobierz bieżący miesiąc dla aktualnego użytkownika z bazy danych
     current_month = current_user.current_period
     return str(current_month)
+
 
 @app.route('/cashflow', methods=["GET", "POST"])
 def cashflow():
@@ -105,12 +123,12 @@ def cashflow():
         db.session.query(Assets).filter_by(user_id=current_user.id, period=current_user.current_period).delete()
         for dd in data:
             asset = Assets(
-                user_id = current_user.id,
-                period = current_user.current_period,
-                name = dd['name'],
-                value_pcs= float(dd['value_pcs']) if dd['value_pcs'] else 1,
-                amount = float(dd['amount']) if dd['amount'] else None,
-                value_pln = float(dd['value_pln']) if dd['value_pln'] else None
+                user_id=current_user.id,
+                period=current_user.current_period,
+                name=dd['name'],
+                value_pcs=float(dd['value_pcs']) if dd['value_pcs'] else 1,
+                amount=float(dd['amount']) if dd['amount'] else None,
+                value_pln=float(dd['value_pln']) if dd['value_pln'] else None
 
             )
             print(asset)
@@ -123,7 +141,9 @@ def cashflow():
     data = result.fetchall()
     print(data)
 
-    return render_template('cashflow.html', user=current_user, current_page='cashflow.html', values=default_cashflow_entries, data=data)
+    return render_template('cashflow.html', user=current_user, current_page='cashflow.html',
+                           values=default_cashflow_entries, data=data)
+
 
 @app.route('/update_month', methods=['POST'])
 def update_month():
@@ -139,6 +159,7 @@ def update_month():
     current_user.current_period = month_number
     db.session.commit()
     return 'OK'
+
 
 @app.route('/budget', methods=['GET', 'POST'])
 def budget():
@@ -169,29 +190,54 @@ def budget():
 
     return render_template('budget.html', user=current_user, current_page='budget.html', data=data)
 
+
 @app.route('/stats')
 def stats():
     return render_template('stats.html', user=current_user, current_page='stats.html')
 
-@app.route('/loans')
+
+@app.route('/loans', methods=['GET', 'POST'])
 def loans():
-    return render_template('loans.html', user=current_user, current_page='loans.html')
+    if request.method == "POST":
+        data = request.get_json()
+        print(data[0]['start'])
+        loan = Loans(
+            user_id=current_user.id,
+            start_date=data[0]['start'],
+            interest=data[0]['interest'],
+            amount_of_installments=data[0]['installments'],
+            loan_value=data[0]['amount'],
+            type=data[0]['typeOfInstallments']
+        )
+        print(loan)
+        db.session.add(loan)
+        db.session.commit()
+        return render_template('loans.html', user=current_user, current_page='loans.html')
+    result = db.session.execute(
+        db.select(Loans).where(Loans.user_id == current_user.id))
+    data = result.fetchall()
+
+    return render_template('loans.html', user=current_user, current_page='loans.html', data=data)
+
 
 @app.route('/profile')
 def profile():
     return render_template('profile.html', user=current_user, current_page='profile.html')
+
 
 @app.route('/admin_settings')
 @admin_only
 def admin_settings():
     return render_template('admin_settings.html', user=current_user, current_page='admin_settings.html')
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('main'))
 
-@app.route('/login_page',methods=["GET", "POST"])
+
+@app.route('/login_page', methods=["GET", "POST"])
 def login_page():
     if request.method == "POST":
         email = request.form.get('email')
@@ -210,7 +256,8 @@ def login_page():
 
     return render_template('login_page.html', user=current_user, current_page='login_page.html')
 
-@app.route('/register',methods=["GET", "POST"])
+
+@app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         email = request.form.get('email')
@@ -237,6 +284,22 @@ def register():
     return render_template("register.html", user=current_user)
 
 
+@app.route('/delete_record', methods=['DELETE'])
+def delete_record():
+    # Pobierz identyfikator rekordu do usunięcia z danych przesłanych przez klienta
+    record_id = request.json.get('id')
+
+    # Znajdź rekord o podanym identyfikatorze i usuń go z bazy danych
+    record = Loans.query.get(record_id)
+    if record:
+        db.session.delete(record)
+        db.session.commit()
+        # Zwróć odpowiedź JSON potwierdzającą usunięcie rekordu
+        return jsonify({"message": "Rekord został pomyślnie usunięty"}), 200
+    else:
+        # Zwróć błąd jeśli rekord o podanym identyfikatorze nie istnieje
+        return jsonify({"message": "Nie znaleziono rekordu o podanym identyfikatorze"}), 404
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=2137)
-

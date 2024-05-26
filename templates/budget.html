@@ -4,23 +4,23 @@
 
   <div class="container">
     <p></p>
-    <h1>This is your budget for month 0<label id="selected-month-label">0</label>/2024</h1>
+    <h1>This is your outcome for month 0<label id="selected-month-label">0</label>/2024</h1>
     <label for="month-select">Wanna change month? <select id="month-select"></select></label>
     <p></p>
     <p>Po prostu wypisz swój budżet. Tutaj jest jakiś dodatkowy opis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada pretium eros scelerisque imperdiet. Etiam at porta turpis. Fusce ut quam at sem mollis maximus id vel orci. Nam finibus, eros rhoncus imperdiet condimentum, sapien sapien imperdiet eros, a congue arcu nisi eget arcu. Praesent non lectus tincidunt, placerat arcu ut, malesuada quam. Cras porttitor tempor erat in venenatis. Ut semper augue id enim pharetra fermentum. Nullam non lacinia tortor, a volutpat eros. Fusce vitae suscipit felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla facilisi. Morbi et eros eget neque rutrum feugiat pulvinar eget est. Quisque. </p>
-<!--    <h4>Total budget: <span id="total">0</span> PLN</h4>-->
+<!--    <h4>Total outcome: <span id="total">0</span> PLN</h4>-->
       <canvas id="myChartest" width="800" height="200"></canvas>
       <canvas id="myChartreal" width="800" height="200"></canvas>
       <h4>Totals (estimated/real):</h4>
     <h4>Income: <span id="label-est-income">0</span> PLN / <span id="label-income">0</span> PLN</h4>
-    <h4>Budget: <span id="label-est-budget">0</span> PLN / <span id="label-budget">0</span> PLN</h4>
+    <h4>Outcome: <span id="label-est-outcome">0</span> PLN / <span id="label-outcome">0</span> PLN</h4>
     <h4>Balance: <span id="label-est-balance">0</span> PLN / <span id="label-balance">0</span> PLN</h4>
     <p></p>
     <br>
     <div id="table-income" class="table-editable">
       <h3>Incomes <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
-      <table id='budgetTable-incomes' class="table" style="table-layout: fixed;">
+      <table id='outcomeTable-incomes' class="table" style="table-layout: fixed;">
         <thead>
           <tr>
             <th>Income name</th>
@@ -57,10 +57,10 @@
 <!--      <button id="export-btn-income" class="btn btn-primary">Export Data</button>-->
 <!--    <p id="export"></p>-->
     <br><br>
-      <div id="table-budget" class="table-editable">
-        <h3>Budget <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
+      <div id="table-outcome" class="table-editable">
+        <h3>Outcome <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
-        <table id='budgetTable-budget' class="table" style="table-layout: fixed;">
+        <table id='outcomeTable-outcome' class="table" style="table-layout: fixed;">
           <thead>
             <tr>
               <th>Category</th>
@@ -93,16 +93,16 @@
       </div>
 
   <!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
-        <button id="export-btn-budget" class="btn btn-primary">Export Data</button>
+        <button id="export-btn-outcome" class="btn btn-primary">Export Data</button>
   <!--    <p id="export"></p>-->
       </div>
     </div>
 <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
 <script>
   var $TABLE = $("#table");
-  var $BTN = $("#export-btn-budget");
+  var $BTN = $("#export-btn-outcome");
   var $EXPORT = $("#export");
-var incomeValues = [
+var estimatedValues = [
     // {
     //     label: 'Dataset 1',
     //     data: [43355], // Tablica danych z jedną wartością
@@ -116,17 +116,15 @@ var incomeValues = [
     //     stack: 'Stack 0',
     // }
 ];
-var budgetValues = [];
+var realValues = [];
 var datasetCombined = [];
 const labels = [''];
-const baseBackgroundColors = ['#ffffff', '#ffffff', '#ffffff', '#ffffff'];
-const setIncomesRealColors = ['#ffff00'];
-const setIncomesEstimatedColors = ['#ffff00'];
-const setBudgetRealColors = ['#ffff00'];
-const setBudgetEstimatedColors = ['#ffff00'];
 
-const OLDbudgetRealColors = ['#000000', '#000000','#000000','#000000'];
-const OLDbudgetEstimatedColors = ['#0000ff', '#0000ff','#0000ff','#0000ff'];
+const setIncomesRealColors = [];
+const setIncomesEstimatedColors = [];
+const setOutcomeRealColors = [];
+const setOutcomeEstimatedColors = [];
+
 const redRealColors = ['#4C0000', '#800000', '#B30000', '#E60000', '#FF3333', '#FF6666', '#FF9999', '#FFCCCC', '#FFE6E6', '#FFFFFF'];
 const redEstimatedColors = ['#663333', '#804040', '#996666', '#B36666', '#CC9999', '#E69999', '#FFCCCC', '#FFDDDD', '#FFE6E6', '#FFF0F0']
 const greenRealColors = ['#004d00', '#006600', '#008000', '#009900', '#00b300', '#00cc00', '#00e600', '#33ff33', '#66ff66', '#99ff99']
@@ -135,21 +133,21 @@ const greenEstimatedColors = ['#336633', '#408040', '#669966', '#66b366', '#99cc
 let i = 0;
 
   function addDataset(label, data, stack, type){
-      let backgroundColor = ['#ffffff'];//baseBackgroundColors[incomeValues.length % 10];
+      let backgroundColor = ['#ffffff'];//baseBackgroundColors[estimatedValues.length % 10];
       if (typeof data === 'number') {
         data = [data];
         // console.log(data)
     }
-    // type 0 - incomes // type 1 - outcomes // stack 0 - estimated // stack 1 - real //
+    // stack 0 - incomes // stack 1 - outcomes // type 0 - estimated // type 1 - real //
 
       if(type===0 && stack==='Stack 0')
          backgroundColor = setIncomesEstimatedColors[i % 10];
       else if(type===0 && stack==='Stack 1')
-        backgroundColor = setIncomesRealColors[i % 10];
+        backgroundColor = setOutcomeEstimatedColors[i % 10];
       else if(type===1 && stack==='Stack 0')
-         backgroundColor = setBudgetEstimatedColors[i % 10];
+         backgroundColor = setIncomesRealColors[i % 10];
       else if(type===1 && stack==='Stack 1')
-        backgroundColor = setBudgetRealColors[i % 10];
+        backgroundColor = setOutcomeRealColors[i % 10];
       i++;
 
       let newDataset = {
@@ -161,24 +159,26 @@ let i = 0;
       }
       //console.log('is this refreshed?');
       if(type === 0)
-        incomeValues.push(newDataset);
+        estimatedValues.push(newDataset);
       else
-        budgetValues.push(newDataset);
+        realValues.push(newDataset);
   }
 
 function refreshValuePLN() {
     console.log("Refreshing values...");
     var totalEstimatedIncome = 0; // Suma szacowanych dochodów
     var totalRealIncome = 0; // Suma rzeczywistych dochodów
-    var totalEstimatedBudget = 0; // Suma szacowanego budżetu
-    var totalRealBudget = 0; // Suma rzeczywistego budżetu
+    var totalEstimatedOutcome = 0; // Suma szacowanego budżetu
+    var totalRealOutcome = 0; // Suma rzeczywistego budżetu
     var totalEstimatedBalance = 0; // Saldo (szacowane)
     var totalRealBalance = 0; // Saldo (rzeczywiste)
     //wyczyszczenie tablicy przed dodawaniem nowych wartości
-    incomeValues.splice(0, incomeValues.length);
-    budgetValues.splice(0, budgetValues.length);
-    // Obliczanie sumy szacowanych i rzeczywistych dochodów
-    var incomeTable = document.querySelectorAll('#budgetTable-incomes tbody tr');
+    estimatedValues.splice(0, estimatedValues.length);
+    realValues.splice(0, realValues.length);
+
+
+    // Obliczanie sumy szacowanych i rzeczywistych dochodów, wydatków w celu ustalenia koloru
+    var incomeTable = document.querySelectorAll('#outcomeTable-incomes tbody tr');
 
     incomeTable.forEach(function(row) {
         var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
@@ -188,62 +188,70 @@ function refreshValuePLN() {
         totalEstimatedIncome += estimated;
         totalRealIncome += real;
 
-        addDataset(name + ' (estimated)', estimated, 'Stack 0', 0);
-        addDataset(name + ' (real)', real, 'Stack 1', 0);
     });
 
+    var outcomeTable = document.querySelectorAll('#outcomeTable-outcome tbody tr');
 
-    // Obliczanie sumy szacowanego i rzeczywistego budżetu
-    var budgetTable = document.querySelectorAll('#budgetTable-budget tbody tr');
-
-    budgetTable.forEach(function(row) {
+    outcomeTable.forEach(function(row) {
         var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
         var real = parseFloat(row.querySelector('td:nth-child(4)').textContent) || 0; // Rzeczywista wartość
         var name = row.querySelector('td:nth-child(1)').textContent;
 
-        totalEstimatedBudget += estimated;
-        totalRealBudget += real;
+        totalEstimatedOutcome += estimated;
+        totalRealOutcome += real;
 
-        addDataset(name + ' (estimated)', estimated, 'Stack 0', 1);
-        addDataset(name + ' (real)', real, 'Stack 1', 1);
+    });
+
+  if(totalEstimatedIncome-totalEstimatedOutcome>0){
+      setOutcomeEstimatedColors.splice(0, setOutcomeEstimatedColors.length, ...greenEstimatedColors);
+      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...greenEstimatedColors)
+    }
+    else {
+      setOutcomeEstimatedColors.splice(0, setOutcomeEstimatedColors.length, ...redEstimatedColors);
+      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...redEstimatedColors);
+    }
+      // determine colour of REAL balance
+    if(totalRealIncome-totalRealOutcome>0){
+      setOutcomeRealColors.splice(0, setOutcomeRealColors.length, ...greenRealColors);
+      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...greenRealColors);
+    }
+    else{
+      setOutcomeRealColors.splice(0, setOutcomeRealColors.length, ...redRealColors);
+      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...redRealColors);
+    }
+
+    incomeTable.forEach(function(row) {
+        var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
+        var real = parseFloat(row.querySelector('td:nth-child(4)').textContent) || 0; // Rzeczywista wartość
+        var name = row.querySelector('td:nth-child(1)').textContent;
+
+
+        addDataset(name + ' (estimated1)', estimated, 'Stack 0', 0);
+        addDataset(name + ' (real2)', real, 'Stack 0', 1);
+    });
+    outcomeTable.forEach(function(row) {
+        var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
+        var real = parseFloat(row.querySelector('td:nth-child(4)').textContent) || 0; // Rzeczywista wartość
+        var name = row.querySelector('td:nth-child(1)').textContent;
+
+
+        addDataset(name + ' (estimated3)', estimated, 'Stack 1', 0);
+        addDataset(name + ' (real4)', real, 'Stack 1', 1);
     });
 
 
-
-    datasetCombined = [incomeValues, budgetValues];
-    // console.log(datasetCombined)
     myChartEst.update();
     myChartReal.update();
-    // determine colour of estimated balance
-    //
-    if(totalEstimatedIncome-totalEstimatedBudget>0){
-      setBudgetEstimatedColors.splice(0, setBudgetEstimatedColors.length, ...greenEstimatedColors);
-      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...greenEstimatedColors)
-    }
-    else
-      setBudgetEstimatedColors.splice(0, setBudgetEstimatedColors.length, ...redEstimatedColors);
-      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...redEstimatedColors);
-    // determine colour of REAL balance
-    if(totalRealIncome-totalRealBudget>0){
-      setBudgetRealColors.splice(0, setBudgetRealColors.length, ...greenRealColors);
-      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...greenRealColors);
-    }
-    else
-      setBudgetRealColors.splice(0, setBudgetRealColors.length, ...redRealColors);
-      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...redRealColors);
-
-
-
 
     // Obliczanie salda (szacowanego i rzeczywistego)
-    totalEstimatedBalance = totalEstimatedIncome - totalEstimatedBudget;
-    totalRealBalance = totalRealIncome - totalRealBudget;
+    totalEstimatedBalance = totalEstimatedIncome - totalEstimatedOutcome;
+    totalRealBalance = totalRealIncome - totalRealOutcome;
 
     // Aktualizacja wartości na stronie
     $('#label-est-income').text(totalEstimatedIncome.toFixed(2)); // Dochody (szacowane)
     $('#label-income').text(totalRealIncome.toFixed(2)); // Dochody (rzeczywiste)
-    $('#label-est-budget').text(totalEstimatedBudget.toFixed(2)); // Budżet (szacowany)
-    $('#label-budget').text(totalRealBudget.toFixed(2)); // Budżet (rzeczywisty)
+    $('#label-est-outcome').text(totalEstimatedOutcome.toFixed(2)); // Budżet (szacowany)
+    $('#label-outcome').text(totalRealOutcome.toFixed(2)); // Budżet (rzeczywisty)
     $('#label-est-balance').text(totalEstimatedBalance >= 0 ? totalEstimatedBalance.toFixed(2) : '(' + Math.abs(totalEstimatedBalance).toFixed(2) + ')'); // Saldo (szacowane)
     $('#label-balance').text(totalRealBalance >= 0 ? totalRealBalance.toFixed(2) : '(' + Math.abs(totalRealBalance).toFixed(2) + ')'); // Saldo (rzeczywiste)
 }
@@ -251,14 +259,14 @@ function refreshValuePLN() {
 
 function refreshValuesOnChange() {
     // Obsługa zdarzenia wprowadzania danych w tabeli "Incomes"
-    $('#budgetTable-incomes').on('input', function() {
+    $('#outcomeTable-incomes').on('input', function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
         //labels.push(2137);
 
     });
 
-    // Obsługa zdarzenia wprowadzania danych w tabeli "Budget"
-    $('#budgetTable-budget').on('input', function() {
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Outcome"
+    $('#outcomeTable-outcome').on('input', function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
     });
 }
@@ -308,8 +316,8 @@ $(document).ready(function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
     });
 
-    // Obsługa zdarzenia wprowadzania danych w tabeli "Budget"
-    $('#cashflowTable-budget').on('input', 'td:eq(2), td:eq(3)', function() {
+    // Obsługa zdarzenia wprowadzania danych w tabeli "Outcome"
+    $('#cashflowTable-outcome').on('input', 'td:eq(2), td:eq(3)', function() {
         refreshValuePLN(); // Wywołanie funkcji odświeżającej wartości
     });
     refreshValuePLN();
@@ -331,14 +339,10 @@ $(document).on("click", ".table-add", function () {
   // Wybierz odpowiednią tabelę dla dodawania wiersza
   if ($(this).closest("#table-income").length) {
     $(this).closest("#table-income").find("tbody").append(newRow);
-  } else if ($(this).closest("#table-budget").length) {
-    $(this).closest("#table-budget").find("tbody").append(newRow);
+  } else if ($(this).closest("#table-outcome").length) {
+    $(this).closest("#table-outcome").find("tbody").append(newRow);
   }
-  console.log("hej co tam")
-  //refreshValuePLN()
-    //refreshValuesOnChange();
 });
-
 
 $(document).on("click", ".table-remove", function () {
     $(this).closest("tr").remove();
@@ -355,10 +359,11 @@ $(document).on("click", ".table-down", function () {
     $row.next().after($row);
   });
 
+//push to db
 $BTN.click(function () {
     var names = {};
-    const table = document.getElementById('budgetTable-incomes');
-    const table2 = document.getElementById('budgetTable-budget');
+    const table = document.getElementById('outcomeTable-incomes');
+    const table2 = document.getElementById('outcomeTable-outcome');
     var data = [];
 
     // pushing data from incomes
@@ -388,7 +393,7 @@ $BTN.click(function () {
         names[name] = true;
     }
 
-    // pushing data from budget
+    // pushing data from outcome
     for(var j = 1; j < table2.rows.length; j++) {
 
         var row2 = table2.rows[j];
@@ -426,53 +431,25 @@ $BTN.click(function () {
   });
 
         // Funkcja do generowania losowych danych
-function generateRandomData(count, min, max) {
-            return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
-        }
+// function generateRandomData(count, min, max) {
+//             return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
+//         }
 
         // Ustawienia wykresu
 const DATA_COUNT = 7;
-const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+// const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
 
 
 
 const dataEst = {
         labels: labels,
-        datasets: incomeValues,
-    //     datasets: [...incomeValues],
-    // //     datasets: [
-    // //             {
-    // //                 label: 'Dataset 1',
-    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
-    // //                 backgroundColor: '#003C43',
-    // //                 stack: 'Stack 0',
-    // //             },
-    // //             {
-    // //                 label: 'Dataset 2',
-    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
-    // //                 backgroundColor: '#135D66',
-    // //                 stack: 'Stack 0',
-    // //             },
-    // //             {
-    // //                 label: 'Dataset 3',
-    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
-    // //                 backgroundColor: '#77B0AA',
-    // //                 stack: 'Stack 1',
-    // //             },
-    // //             {
-    // //                 label: 'Dataset 4',
-    // //                 data: generateRandomData(DATA_COUNT, 0, 1000),
-    // //                 backgroundColor: '#E3FEF7',
-    // //                 stack: 'Stack 1',
-    // //             },
-    // //
-    // //         ]
+        datasets: estimatedValues,
         };
 
 const dataReal ={
-  labels: labels,
-  datasets: budgetValues,
-}
+        labels: labels,
+        datasets: realValues,
+};
 const configEst = {
             type: 'bar',
             data: dataEst,
@@ -480,7 +457,7 @@ const configEst = {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Incomes'
+                        text: 'Estimations'
                     },
                 },
                 responsive: true,
@@ -506,7 +483,7 @@ const configReal = {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Budget'
+                        text: 'Real'
                     },
                 },
                 responsive: true,
@@ -530,6 +507,8 @@ const configReal = {
         var ctxreal = document.getElementById('myChartreal').getContext('2d');
         var myChartEst = new Chart(ctxest, configEst);
         var myChartReal = new Chart(ctxreal, configReal);
+
+        refreshValuePLN();
 </script>
 
 

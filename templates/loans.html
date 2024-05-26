@@ -100,9 +100,17 @@
     <td id="4" contenteditable="false">{{value[0].loan_value}}</td>
     <td id="5" contenteditable="false">{{value[0].type}}</td>
     <td>
-        <button class="table-remove btn btn-danger" aria-label="Remove Row" data-id="{{value[0].loan_id}}">
-            <i class="fas fa-trash-alt"></i>
+
+        <button class="table-lookup btn btn-secondary" aria-label="Lookup" data-id="{{value[0].loan_id}}">
+            <i class="fa-solid fa-magnifying-glass"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+        </svg></i>
         </button>
+        <button class="table-remove btn btn-danger" aria-label="Remove Row" data-id="{{value[0].loan_id}}">
+            <i class="fas fa-trash-alt" ></i>
+
+        </button>
+
     </td>
 </tr>
         {% endfor %}}
@@ -115,7 +123,8 @@
   <script>
     console.log("marker");
     const repaymentPlan = [];
-    function generateRepaymentPlan(interestRate, numberOfPayments, amount) {
+    let repaymentPlanAlert = '';
+    function generatePlanStale(interestRate, numberOfPayments, amount) {
       console.log("uruchamiam liczenie rat stałych");
       repaymentPlan.splice(0, repaymentPlan.length);
       const monthlyInterestRate = interestRate / 12 / 100;
@@ -137,14 +146,18 @@
           capitalPayment: capitalPayment,
           remainingAmount: remainingAmount,
         });
+        let nrRaty = i+1;
+        repaymentPlanAlert += 'Rata: ' + nrRaty + ', ods: ' + interestPayment.toFixed(2) + ', kap: ' + capitalPayment.toFixed(2) + ', poz: ' + remainingAmount.toFixed(2) + '\n';
       }
-      console.log(repaymentPlan);
+      alert(repaymentPlanAlert)
+      // console.log(repaymentPlan);
       return 0;
     }
 
-    function generateRepaymentPlan2(interestRate, numberOfPayments, amount) {
+    function generateRepaymentMal(interestRate, numberOfPayments, amount) {
       console.log("uruchamiam liczenie rat malejących");
       repaymentPlan.splice(0, repaymentPlan.length);
+      let repaymentPlanAlert = '';
       const monthlyInterestRate = interestRate / 12 / 100;
       const monthlyCapitalPayment = amount / numberOfPayments;
 
@@ -161,7 +174,10 @@
           totalPayment: totalPayment,
           remainingAmount: remainingAmount,
         });
+        let nrRaty = i+1;
+        repaymentPlanAlert += 'Rata: ' + nrRaty + ', ods: ' + interestPayment.toFixed(2) + ', kap: ' + monthlyCapitalPayment.toFixed(2) + ', poz: ' + remainingAmount.toFixed(2) + '\n';
       }
+      alert(repaymentPlanAlert)
       console.log(repaymentPlan);
       return 0;
     }
@@ -205,9 +221,9 @@
           "floatingInputGroup5"
         ).value;
         if (selectedOption === "malejące") {
-          generateRepaymentPlan2(interestRate, numberOfPayments, amount);
+          generateRepaymentMal(interestRate, numberOfPayments, amount);
         } else if (selectedOption === "stałe") {
-          generateRepaymentPlan(interestRate, numberOfPayments, amount);
+          generatePlanStale(interestRate, numberOfPayments, amount);
         } else {
           alert("Proszę wybrać rodzaj odsetek.");
         }
@@ -269,7 +285,7 @@
           console.log(startDate, interestRate, numberOfPayments, amount);
 
           // Tutaj można wywołać funkcję do generowania planu spłaty lub inne operacje na danych
-          // np. generateRepaymentPlan(interestRate, numberOfPayments, amount);
+          // np. generatePlanStale(interestRate, numberOfPayments, amount);
           var dataToPush = []
           const data = {
             start: startDate,
@@ -314,8 +330,7 @@
         });
     });
 
-document.addEventListener("click", function(event) {
-    if (event.target.classList.contains("table-remove")) {
+$(document).on("click", ".table-remove", function() {
       console.log('teraz wyswietlam id');
       if(confirm("na pewno?")) {
         var id = event.target.dataset.id; // Pobierz identyfikator rekordu z atrybutu data-id przycisku usuwania
@@ -330,9 +345,29 @@ document.addEventListener("click", function(event) {
         })
         event.target.closest("tr").remove();
       }
-    }
+
 });
 
+
+
+$('.container').on("click", ".table-lookup", function() {
+    console.log('loooooooooking');
+      // console.log('teraz wyswietlam id');
+      // if(confirm("na pewno?")) {
+      //   var id = event.target.dataset.id; // Pobierz identyfikator rekordu z atrybutu data-id przycisku usuwania
+      //   console.log(id);
+      //   // Wyślij żądanie DELETE do serwera, aby usunąć rekord
+      //   fetch("/delete_record", {
+      //     method: 'DELETE',
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify({id: id})
+      //   })
+      //   event.target.closest("tr").remove();
+      // }
+
+});
     // Funkcja do generowania planu spłaty
 
     //console.log(repaymentPlan);
@@ -346,8 +381,8 @@ document.addEventListener("click", function(event) {
     // let numberOfPayments = 10;
     // let amount = 10000;
     // console.log("borjar?");
-    // generateRepaymentPlan(interestRate, numberOfPayments, amount);
-    // generateRepaymentPlan2(interestRate, numberOfPayments, amount);
+    // generatePlanStale(interestRate, numberOfPayments, amount);
+    // generateRepaymentMal(interestRate, numberOfPayments, amount);
     // dev only
   </script>
 

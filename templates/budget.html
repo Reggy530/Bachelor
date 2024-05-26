@@ -119,18 +119,38 @@ var incomeValues = [
 var budgetValues = [];
 var datasetCombined = [];
 const labels = [''];
-const baseBackgroundColors = ['#003C43', '#135D66', '#77B0AA', '#E3FEF7'];
-const budgetRealColors = ['#FF204E', '#A0153E','#5D0E41','#00224D'];
-const budgetEstimatedColors = ['#F5EEE6', '#FFF8E3','#F3D7CA','#E6A4B4']
+const baseBackgroundColors = ['#ffffff', '#ffffff', '#ffffff', '#ffffff'];
+const setIncomesRealColors = ['#ffff00'];
+const setIncomesEstimatedColors = ['#ffff00'];
+const setBudgetRealColors = ['#ffff00'];
+const setBudgetEstimatedColors = ['#ffff00'];
+
+const OLDbudgetRealColors = ['#000000', '#000000','#000000','#000000'];
+const OLDbudgetEstimatedColors = ['#0000ff', '#0000ff','#0000ff','#0000ff'];
+const redRealColors = ['#4C0000', '#800000', '#B30000', '#E60000', '#FF3333', '#FF6666', '#FF9999', '#FFCCCC', '#FFE6E6', '#FFFFFF'];
+const redEstimatedColors = ['#663333', '#804040', '#996666', '#B36666', '#CC9999', '#E69999', '#FFCCCC', '#FFDDDD', '#FFE6E6', '#FFF0F0']
+const greenRealColors = ['#004d00', '#006600', '#008000', '#009900', '#00b300', '#00cc00', '#00e600', '#33ff33', '#66ff66', '#99ff99']
+const greenEstimatedColors = ['#336633', '#408040', '#669966', '#66b366', '#99cc99', '#99e699', '#ccffcc', '#ddffdd', '#e6ffe6', '#f0fff0']
+
+let i = 0;
+
   function addDataset(label, data, stack, type){
-      let backgroundColor = baseBackgroundColors[incomeValues.length % baseBackgroundColors.length];
+      let backgroundColor = ['#ffffff'];//baseBackgroundColors[incomeValues.length % 10];
       if (typeof data === 'number') {
         data = [data];
+        // console.log(data)
     }
-      if(type===1 && stack==='Stack 0')
-         backgroundColor = budgetEstimatedColors[budgetValues.length % baseBackgroundColors.length];
+    // type 0 - incomes // type 1 - outcomes // stack 0 - estimated // stack 1 - real //
+
+      if(type===0 && stack==='Stack 0')
+         backgroundColor = setIncomesEstimatedColors[i % 10];
+      else if(type===0 && stack==='Stack 1')
+        backgroundColor = setIncomesRealColors[i % 10];
+      else if(type===1 && stack==='Stack 0')
+         backgroundColor = setBudgetEstimatedColors[i % 10];
       else if(type===1 && stack==='Stack 1')
-        backgroundColor = budgetRealColors[budgetValues.length % baseBackgroundColors.length];
+        backgroundColor = setBudgetRealColors[i % 10];
+      i++;
 
       let newDataset = {
           type:'bar',
@@ -139,10 +159,13 @@ const budgetEstimatedColors = ['#F5EEE6', '#FFF8E3','#F3D7CA','#E6A4B4']
           backgroundColor: backgroundColor,
           stack:stack,
       }
+      //console.log('is this refreshed?');
       if(type === 0)
-          incomeValues.push(newDataset);
-      else budgetValues.push(newDataset);
+        incomeValues.push(newDataset);
+      else
+        budgetValues.push(newDataset);
   }
+
 function refreshValuePLN() {
     console.log("Refreshing values...");
     var totalEstimatedIncome = 0; // Suma szacowanych dochodów
@@ -155,37 +178,63 @@ function refreshValuePLN() {
     incomeValues.splice(0, incomeValues.length);
     budgetValues.splice(0, budgetValues.length);
     // Obliczanie sumy szacowanych i rzeczywistych dochodów
-    $('#budgetTable-incomes tbody tr').each(function() {
-        var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
-        var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
-        var name = $(this).find('td:eq(0)').text()
+    var incomeTable = document.querySelectorAll('#budgetTable-incomes tbody tr');
 
-        //console.log(name, estimated, real);
+    incomeTable.forEach(function(row) {
+        var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
+        var real = parseFloat(row.querySelector('td:nth-child(4)').textContent) || 0; // Rzeczywista wartość
+        var name = row.querySelector('td:nth-child(1)').textContent;
+
         totalEstimatedIncome += estimated;
         totalRealIncome += real;
-        //console.log(name, estimated);
-        addDataset(name+' (estimated)', estimated, 'Stack 0', 0);
-        addDataset(name+ ' (real)', real, 'Stack 1', 0);
 
+        addDataset(name + ' (estimated)', estimated, 'Stack 0', 0);
+        addDataset(name + ' (real)', real, 'Stack 1', 0);
     });
+
 
     // Obliczanie sumy szacowanego i rzeczywistego budżetu
-    $('#budgetTable-budget tbody tr').each(function() {
-        var estimated = parseFloat($(this).find('td:eq(2)').text()) || 0; // Szacowana wartość
-        var real = parseFloat($(this).find('td:eq(3)').text()) || 0; // Rzeczywista wartość
-        var name = $(this).find('td:eq(0)').text() || 0;
+    var budgetTable = document.querySelectorAll('#budgetTable-budget tbody tr');
+
+    budgetTable.forEach(function(row) {
+        var estimated = parseFloat(row.querySelector('td:nth-child(3)').textContent) || 0; // Szacowana wartość
+        var real = parseFloat(row.querySelector('td:nth-child(4)').textContent) || 0; // Rzeczywista wartość
+        var name = row.querySelector('td:nth-child(1)').textContent;
+
         totalEstimatedBudget += estimated;
         totalRealBudget += real;
-        addDataset(name+' (estimated)', estimated, 'Stack 0', 1);
-        addDataset(name+' (real)', real, 'Stack 1', 1);
 
+        addDataset(name + ' (estimated)', estimated, 'Stack 0', 1);
+        addDataset(name + ' (real)', real, 'Stack 1', 1);
     });
+
 
 
     datasetCombined = [incomeValues, budgetValues];
-    console.log(datasetCombined)
+    // console.log(datasetCombined)
     myChartEst.update();
     myChartReal.update();
+    // determine colour of estimated balance
+    //
+    if(totalEstimatedIncome-totalEstimatedBudget>0){
+      setBudgetEstimatedColors.splice(0, setBudgetEstimatedColors.length, ...greenEstimatedColors);
+      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...greenEstimatedColors)
+    }
+    else
+      setBudgetEstimatedColors.splice(0, setBudgetEstimatedColors.length, ...redEstimatedColors);
+      setIncomesEstimatedColors.splice(0, setIncomesEstimatedColors.length, ...redEstimatedColors);
+    // determine colour of REAL balance
+    if(totalRealIncome-totalRealBudget>0){
+      setBudgetRealColors.splice(0, setBudgetRealColors.length, ...greenRealColors);
+      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...greenRealColors);
+    }
+    else
+      setBudgetRealColors.splice(0, setBudgetRealColors.length, ...redRealColors);
+      setIncomesRealColors.splice(0, setIncomesRealColors.length, ...redRealColors);
+
+
+
+
     // Obliczanie salda (szacowanego i rzeczywistego)
     totalEstimatedBalance = totalEstimatedIncome - totalEstimatedBudget;
     totalRealBalance = totalRealIncome - totalRealBudget;

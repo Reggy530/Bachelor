@@ -302,4 +302,4 @@ def delete_record():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=2137)
+    app.run(debug=True, host='0.0.0.0', port=2137)

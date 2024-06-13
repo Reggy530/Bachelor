@@ -1,7 +1,7 @@
 {% include "header.html" %}
 
 <div class="container">
-  <h1>Dodaj swoje kredyty.</h1>
+  <h1>Loan calculator</h1>
   <div class="row">
     <div class="col-md-6">
       <div class="input-group mb-3">
@@ -113,7 +113,7 @@
 
     </td>
 </tr>
-        {% endfor %}}
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -124,7 +124,7 @@
     console.log("marker");
     const repaymentPlan = [];
     let repaymentPlanAlert = '';
-    function generatePlanStale(interestRate, numberOfPayments, amount) {
+    function generatePlanStale(interestRate, numberOfPayments, amount, needtopush) {
       console.log("uruchamiam liczenie rat stałych");
       repaymentPlan.splice(0, repaymentPlan.length);
       const monthlyInterestRate = interestRate / 12 / 100;
@@ -154,7 +154,7 @@
       return 0;
     }
 
-    function generateRepaymentMal(interestRate, numberOfPayments, amount) {
+    function generateRepaymentMal(startDate, interestRate, numberOfPayments, amount, needtopush) {
       console.log("uruchamiam liczenie rat malejących");
       repaymentPlan.splice(0, repaymentPlan.length);
       let repaymentPlanAlert = '';
@@ -345,29 +345,42 @@ $(document).on("click", ".table-remove", function() {
         })
         event.target.closest("tr").remove();
       }
-
 });
 
 
 
-$('.container').on("click", ".table-lookup", function() {
-    console.log('loooooooooking');
-      // console.log('teraz wyswietlam id');
-      // if(confirm("na pewno?")) {
-      //   var id = event.target.dataset.id; // Pobierz identyfikator rekordu z atrybutu data-id przycisku usuwania
-      //   console.log(id);
-      //   // Wyślij żądanie DELETE do serwera, aby usunąć rekord
-      //   fetch("/delete_record", {
-      //     method: 'DELETE',
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     },
-      //     body: JSON.stringify({id: id})
-      //   })
-      //   event.target.closest("tr").remove();
-      // }
+// Obsługa kliknięcia przycisków "Podgląd"
+$('.container').on("click", ".table-lookup", function () {
+    // Pobierz identyfikator wiersza (loan_id) z atrybutu data-id przycisku
+    var loanId = $(this).data("id");
+    console.log(loanId)
+    // Znajdź wiersz tabeli odpowiadający klikniętemu przyciskowi
+    var row = $(this).closest("tr");
 
+
+    // Pobierz dane z komórek w danym wierszu
+    var startDate = row.find("td:nth-child(1)").text();
+    var interestRate = row.find("td:nth-child(2)").text();
+    var numberOfPayments = row.find("td:nth-child(3)").text();
+    var amount = row.find("td:nth-child(4)").text();
+    var typeOfInstallments = row.find("td:nth-child(5)").text();
+    // Wywołaj odpowiednią funkcję w zależności od rodzaju odsetek
+    if (typeOfInstallments === 'mal') {
+        generateRepaymentMal(parseFloat(interestRate), parseInt(numberOfPayments), parseFloat(amount));
+    } else if (typeOfInstallments === 'st') {
+        generatePlanStale(parseFloat(interestRate), parseInt(numberOfPayments), parseFloat(amount));
+    } else {
+        alert('Proszę wybrać rodzaj odsetek.');
+    }
 });
+
+// $('.container').on("click", ".table-lookup", function() {
+//     var id = event.target.dataset.id;
+//     var details = JSON.parse(event.target.dataset.details);
+//     console.log(details);
+//     // Tutaj możesz wyświetlić szczegóły w dowolny sposób, na przykład poprzez wyświetlenie alertu
+//     alert("Szczegóły spłaty: " + JSON.stringify(details));
+// });
     // Funkcja do generowania planu spłaty
 
     //console.log(repaymentPlan);

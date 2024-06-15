@@ -1,7 +1,9 @@
 {% include "header.html" %}
 
 <div class="container">
+  <p></p>
   <h1>Loan calculator</h1>
+  <p></p>
   <div class="row">
     <div class="col-md-6">
       <div class="input-group mb-3">
@@ -83,11 +85,11 @@
     <table id="loansTable" class="table" style="table-layout: fixed">
       <thead>
         <tr>
-          <th>Start time</th>
-          <th>Interest</th>
-          <th>Installments</th>
-          <th>Amount</th>
-          <th>Type of installments</th>
+          <th>Pierwszy dzień</th>
+          <th>Oprocentowanie</th>
+          <th>Ilość rat</th>
+          <th>Kwota</th>
+          <th>Rodzaj odsetek</th>
           <th></th>
         </tr>
       </thead>
@@ -252,9 +254,9 @@
           console.log("selected option: "+ selectedOption)
            let typeOfInstallments;
               if (selectedOption === 'malejące') {
-                  typeOfInstallments = 'mal';
+                  typeOfInstallments = 'malejące';
               } else if (selectedOption === 'stałe') {
-                  typeOfInstallments = 'st';
+                  typeOfInstallments = 'stałe';
               } else {
                   // Obsługa przypadku, gdy nie wybrano żadnej opcji lub wartość jest inna niż 'malejące' lub 'stałe'
                   typeOfInstallments = ''; // Tutaj możesz wpisać domyślną wartość lub obsługę błędu

@@ -10906,3 +10906,17 @@ header.masthead .post-heading .meta a {
 .table-add:hover {
   color: #0b0;
 }
+    .carousel-caption {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      color: white;
+    }
+
+    .carousel-item img {
+      max-height: 20px; /* Ustaw maksymalną wysokość obrazów */
+      width: auto; /* Automatyczna szerokość */
+    }
+
+    .carousel-inner {
+      max-height: 20px; /* Ustaw maksymalną wysokość dla karuzeli */
+    }

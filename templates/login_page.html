@@ -1,19 +1,20 @@
 
 {% include "header.html" %}
 
+<p></p>
+<div class="container">
 
-
-  <h1><center>Podstrona. Hurra! 🌞 </h1>
 <div class="box">
-    <h1>Login</h1>
+    <h1>Zaloguj się</h1>
     <form method="post">
         <input type="text" name="email" placeholder="Email" required="required"/>
         <input type="password" name="password" placeholder="Password" required="required"/>
-        <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
+        <button type="submit" class="btn btn-primary btn-block btn-large">Zaloguj</button>
     </form>
-
-No account? Register then.
-    <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='{{ url_for('register') }}'">REGISTER!!!</button>
-
+    <p></p>
+    Nie masz konta? Zarejestruj się!
+    <p></p>
+    <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='{{ url_for('register') }}'">Zarejestruj</button>
+</div>
 
 {% include "footer.html" %}

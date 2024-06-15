@@ -158,9 +158,9 @@
           <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
             <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bank"/></svg>
             {% if user.is_authenticated: %}
-            Hello again, {{user.name}}!
+            Dzień dobry, {{user.name}}!
             {% else %}
-            Not logged in
+            Niezalogowany, zaloguj się!
             {% endif %}
 
 
@@ -175,7 +175,7 @@
                 <a href="{{ url_for('main')}}" class="nav-link text-white">
                 {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"/></svg>
-                Home
+                Start
               </a>
             </li>
             {% if user.is_authenticated: %}
@@ -186,7 +186,7 @@
                 <a href="{{ url_for('cashflow')}}" class="nav-link text-white">
                   {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
-                Cashflow
+                Aktywa
               </a>
             </li>
             <li>
@@ -196,7 +196,7 @@
                 <a href="{{ url_for('budget')}}" class="nav-link text-white">
                   {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#cash-coin"/></svg>
-                Budget
+                Budżet
               </a>
             </li>
             <li>
@@ -206,7 +206,7 @@
                 <a href="{{ url_for('stats')}}" class="nav-link text-white">
                   {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#graph"/></svg>
-                Stats
+                Statystyki
               </a>
             </li>
             <li>
@@ -216,7 +216,7 @@
                 <a href="{{ url_for('loans')}}" class="nav-link text-white">
                   {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#credit"/></svg>
-                Loans
+                Kredyty
               </a>
             </li>
 <!--            <li>-->
@@ -243,7 +243,7 @@
                 <a href="{{ url_for('login_page')}}" class="nav-link text-white">
                   {% endif %}
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#box-arrow-right"/></svg>
-                Login
+                Zaloguj
               </a>
             </li>
             {% endif %}
@@ -259,7 +259,7 @@
             <li>
               <a href="{{ url_for('logout')}}" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#box-arrow-left"/></svg>
-                Logout
+                Wyloguj
               </a>
             </li>
             {% endif %}

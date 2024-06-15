@@ -194,6 +194,9 @@ def budget():
     return render_template('budget.html', user=current_user, current_page='budget.html', data=data)
 
 
+
+from collections import defaultdict
+
 @app.route('/stats')
 def stats():
     # Query to get the sum of value_pln grouped by period for the current user
@@ -206,7 +209,7 @@ def stats():
         Assets.period
     ).all()
 
-    # 2. Query to get sum of amount where is_income = 1 grouped by period for current user
+    # Query to get sum of amount where is_income = 1 grouped by period for current user
     income_data = db.session.query(
         Budget.period,
         func.sum(Budget.amount).label('total_income')
@@ -217,7 +220,7 @@ def stats():
         Budget.period
     ).all()
 
-    # 3. Query to get sum of amount where is_income = 0 grouped by period for current user
+    # Query to get sum of amount where is_income = 0 grouped by period for current user
     expenses_data = db.session.query(
         Budget.period,
         func.sum(Budget.amount).label('total_expenses')
@@ -228,22 +231,40 @@ def stats():
         Budget.period
     ).all()
 
-    # 4. Combine data for the balance (income - expenses) by period
-    balance_data = defaultdict(int)
-    for income in income_data:
-        balance_data[income.period] += income.total_income
+    # Prepare dictionaries to store data for each month (1-12)
+    assets_dict = {i: {'period': i, 'total_value_pln': 0} for i in range(1, 13)}
+    income_dict = {i: {'period': i, 'total_income': 0} for i in range(1, 13)}
+    expenses_dict = {i: {'period': i, 'total_expenses': 0} for i in range(1, 13)}
+    balance_dict = {i: {'period': i, 'balance': 0} for i in range(1, 13)}
 
-    for expense in expenses_data:
-        balance_data[expense.period] -= expense.total_expenses
+    # Populate assets_dict with queried data
+    for data in assets_data:
+        assets_dict[data.period]['total_value_pln'] = data.total_value_pln
+
+    # Populate income_dict with queried data
+    for data in income_data:
+        income_dict[data.period]['total_income'] = data.total_income
+
+    # Populate expenses_dict with queried data
+    for data in expenses_data:
+        expenses_dict[data.period]['total_expenses'] = data.total_expenses
+
+    # Calculate balance and populate balance_dict
+    for period in range(1, 13):
+        income = income_dict[period]['total_income'] if income_dict[period]['total_income'] is not None else 0
+        expenses = expenses_dict[period]['total_expenses'] if expenses_dict[period]['total_expenses'] is not None else 0
+        balance_dict[period]['balance'] = income - expenses
 
     # Prepare the JSON response
     json_data = {
-        'assets': [{'period': data.period, 'total_value_pln': data.total_value_pln} for data in assets_data],
-        'income': [{'period': data.period, 'total_income': data.total_income} for data in income_data],
-        'expenses': [{'period': data.period, 'total_expenses': data.total_expenses} for data in expenses_data],
-        'balance': [{'period': period, 'balance': balance_data[period]} for period in balance_data]
+        'assets': list(assets_dict.values()),
+        'income': list(income_dict.values()),
+        'expenses': list(expenses_dict.values()),
+        'balance': list(balance_dict.values())
     }
-    print(json_data)
+
+    print(json_data)  # Do debugowania, możesz to usunąć lub zakomentować
+
     return render_template('stats.html', user=current_user, data=json_data, current_page='stats.html')
 
 

@@ -225,16 +225,16 @@
 <!--                Simulations-->
 <!--              </a>-->
 <!--            </li>-->
-            <li>
-              {% if current_page == 'profile.html' %}
-                <a href="{{ url_for('profile')}}" class="nav-link text-secondary">
-                {% else %}
-                <a href="{{ url_for('profile')}}" class="nav-link text-white">
-                  {% endif %}
-                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>
-                Profile
-              </a>
-            </li>
+<!--            <li>-->
+<!--              {% if current_page == 'profile.html' %}-->
+<!--                <a href="{{ url_for('profile')}}" class="nav-link text-secondary">-->
+<!--                {% else %}-->
+<!--                <a href="{{ url_for('profile')}}" class="nav-link text-white">-->
+<!--                  {% endif %}-->
+<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>-->
+<!--                Profile-->
+<!--              </a>-->
+<!--            </li>-->
             {% else %}
             <li>
               {% if current_page == 'login_page.html' %}

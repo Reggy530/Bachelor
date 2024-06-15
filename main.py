@@ -1,7 +1,8 @@
+import sqlite3
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import UniqueConstraint, and_
+from sqlalchemy import UniqueConstraint, and_, func
 from datetime import datetime, timedelta
 import requests
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -35,6 +36,7 @@ def admin_only(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
 
 
 class User(UserMixin, db.Model):
@@ -193,6 +195,19 @@ def budget():
 
 @app.route('/stats')
 def stats():
+    # Query to get the sum of value_pln grouped by period for the current user
+    result = db.session.query(
+        Assets.period,
+        func.sum(Assets.value_pln).label('total_value_pln')
+    ).filter(
+        Assets.user_id == current_user.id
+    ).group_by(
+        Assets.period
+    ).all()
+
+    # Convert the result to a list of dictionaries
+    data = [{'period': row.period, 'total_value_pln': row.total_value_pln} for row in result]
+    print(data)
     return render_template('stats.html', user=current_user, current_page='stats.html')
 
 

@@ -1,69 +1,128 @@
-
 {% include "header.html" %}
-<canvas id="spendingsChart" width="20" height="20"></canvas>
 
+<div style="display: flex; flex-wrap: wrap;">
+    <div style="width: 50%; padding: 10px;">
+        <canvas id="chartAssets" width="400" height="300"></canvas>
+    </div>
+    <div style="width: 50%; padding: 10px;">
+        <canvas id="chartIncome" width="400" height="300"></canvas>
+    </div>
+    <div style="width: 50%; padding: 10px;">
+        <canvas id="chartExpenses" width="400" height="300"></canvas>
+    </div>
+    <div style="width: 50%; padding: 10px;">
+        <canvas id="chartBalance" width="400" height="300"></canvas>
+    </div>
+</div>
 <script>
-  myChart.update();
+    const json_data = {{ data | tojson }};
 
-const DATA_COUNT = 7;
-const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+    // Mapowanie numerów miesięcy na nazwy
+    const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
 
-const labels = Utils.months({count: 7});
-const data = {
-  labels: labels,
-  datasets: [
-    {
-      label: 'Fully Rounded',
-      data: Utils.numbers(NUMBER_CFG),
-      borderColor: Utils.CHART_COLORS.red,
-      backgroundColor: Utils.transparentize(Utils.CHART_COLORS.red, 0.5),
-      borderWidth: 2,
-      borderRadius: Number.MAX_VALUE,
-      borderSkipped: false,
-    },
-    {
-      label: 'Small Radius',
-      data: Utils.numbers(NUMBER_CFG),
-      borderColor: Utils.CHART_COLORS.blue,
-      backgroundColor: Utils.transparentize(Utils.CHART_COLORS.blue, 0.5),
-      borderWidth: 2,
-      borderRadius: 5,
-      borderSkipped: false,
-    }
-  ]
-};
-const config = {
-  type: 'bar',
-  data: data,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Chart.js Bar Chart'
-      }
-    }
-  },
-};
-const actions = [
-  {
-    name: 'Randomize',
-    handler(chart) {
-      chart.data.datasets.forEach(dataset => {
-        dataset.data = Utils.numbers({count: chart.data.labels.length, min: -100, max: 100});
-      });
-      chart.update();
-    }
-  },
-];
-var ctx = document.getElementById("spendingsChart").getContext("2d");
-var myChart = new Chart(ctx, config);
+    // Generowanie etykiet
+    const labels = json_data.assets.map(item => monthNames[item.period - 1]); // odejmujemy 1, ponieważ numery miesięcy zaczynają się od 1, a tablica zaczyna się od 0
+
+
+    // Wykres Aktywów
+    const dataAssets = {
+        labels: labels,
+        datasets: [{
+            label: 'Total Value PLN',
+            data: json_data.assets.map(item => item.total_value_pln),
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+        }]
+    };
+    const configAssets = {
+        type: 'bar',
+        data: dataAssets,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Assets' }
+            }
+        },
+    };
+    var ctxAssets = document.getElementById('chartAssets').getContext('2d');
+    var chartAssets = new Chart(ctxAssets, configAssets);
+
+    // Wykres Dochodów
+    const dataIncome = {
+        labels: labels,
+        datasets: [{
+            label: 'Total Income',
+            data: json_data.income.map(item => item.total_income),
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+        }]
+    };
+    const configIncome = {
+        type: 'bar',
+        data: dataIncome,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Income' }
+            }
+        },
+    };
+    var ctxIncome = document.getElementById('chartIncome').getContext('2d');
+    var chartIncome = new Chart(ctxIncome, configIncome);
+
+    // Wykres Wydatków
+    const dataExpenses = {
+        labels: labels,
+        datasets: [{
+            label: 'Total Expenses',
+            data: json_data.expenses.map(item => item.total_expenses),
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+        }]
+    };
+    const configExpenses = {
+        type: 'bar',
+        data: dataExpenses,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Expenses' }
+            }
+        },
+    };
+    var ctxExpenses = document.getElementById('chartExpenses').getContext('2d');
+    var chartExpenses = new Chart(ctxExpenses, configExpenses);
+
+    // Wykres Bilansu
+    const dataBalance = {
+        labels: labels,
+        datasets: [{
+            label: 'Balance',
+            data: json_data.balance.map(item => item.balance),
+            backgroundColor: 'rgba(153, 102, 255, 0.5)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1,
+        }]
+    };
+    const configBalance = {
+        type: 'bar',
+        data: dataBalance,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Balance' }
+            }
+        },
+    };
+    var ctxBalance = document.getElementById('chartBalance').getContext('2d');
+    var chartBalance = new Chart(ctxBalance, configBalance);
 </script>
-
-
-
 
 {% include "footer.html" %}

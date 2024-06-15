@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import requests
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from collections import defaultdict
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
@@ -196,7 +197,7 @@ def budget():
 @app.route('/stats')
 def stats():
     # Query to get the sum of value_pln grouped by period for the current user
-    result = db.session.query(
+    assets_data = db.session.query(
         Assets.period,
         func.sum(Assets.value_pln).label('total_value_pln')
     ).filter(
@@ -205,10 +206,45 @@ def stats():
         Assets.period
     ).all()
 
-    # Convert the result to a list of dictionaries
-    data = [{'period': row.period, 'total_value_pln': row.total_value_pln} for row in result]
-    print(data)
-    return render_template('stats.html', user=current_user, current_page='stats.html')
+    # 2. Query to get sum of amount where is_income = 1 grouped by period for current user
+    income_data = db.session.query(
+        Budget.period,
+        func.sum(Budget.amount).label('total_income')
+    ).filter(
+        Budget.user_id == current_user.id,
+        Budget.is_income == 1
+    ).group_by(
+        Budget.period
+    ).all()
+
+    # 3. Query to get sum of amount where is_income = 0 grouped by period for current user
+    expenses_data = db.session.query(
+        Budget.period,
+        func.sum(Budget.amount).label('total_expenses')
+    ).filter(
+        Budget.user_id == current_user.id,
+        Budget.is_income == 0
+    ).group_by(
+        Budget.period
+    ).all()
+
+    # 4. Combine data for the balance (income - expenses) by period
+    balance_data = defaultdict(int)
+    for income in income_data:
+        balance_data[income.period] += income.total_income
+
+    for expense in expenses_data:
+        balance_data[expense.period] -= expense.total_expenses
+
+    # Prepare the JSON response
+    json_data = {
+        'assets': [{'period': data.period, 'total_value_pln': data.total_value_pln} for data in assets_data],
+        'income': [{'period': data.period, 'total_income': data.total_income} for data in income_data],
+        'expenses': [{'period': data.period, 'total_expenses': data.total_expenses} for data in expenses_data],
+        'balance': [{'period': period, 'balance': balance_data[period]} for period in balance_data]
+    }
+    print(json_data)
+    return render_template('stats.html', user=current_user, data=json_data, current_page='stats.html')
 
 
 @app.route('/loans', methods=['GET', 'POST'])

@@ -1,13 +1,9 @@
-import sqlite3
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint, and_, func
-from datetime import datetime, timedelta
-import requests
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from collections import defaultdict
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
@@ -17,7 +13,7 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-default_cashflow_entries = [['Allegro', 'Borjar'], ['Faglar', 'Hunja']]
+default_cashflow_entries = [['a', 'b'], ['c', 'd']]
 
 
 # Create a user_loader callback
@@ -111,14 +107,14 @@ def main():
     print(current_user)
     return render_template('index.html', user=current_user, current_page='index.html')
 
-
+@login_required
 @app.route('/current_month', methods=['GET'])
 def current_month():
     # Pobierz bieżący miesiąc dla aktualnego użytkownika z bazy danych
     current_month = current_user.current_period
     return str(current_month)
 
-
+@login_required
 @app.route('/cashflow', methods=["GET", "POST"])
 def cashflow():
     if request.method == "POST":
@@ -147,7 +143,7 @@ def cashflow():
     return render_template('cashflow.html', user=current_user, current_page='cashflow.html',
                            values=default_cashflow_entries, data=data)
 
-
+@login_required
 @app.route('/update_month', methods=['POST'])
 def update_month():
     selected_month = request.form['month']
@@ -163,7 +159,7 @@ def update_month():
     db.session.commit()
     return 'OK'
 
-
+@login_required
 @app.route('/budget', methods=['GET', 'POST'])
 def budget():
     if request.method == "POST":
@@ -196,7 +192,7 @@ def budget():
 
 
 from collections import defaultdict
-
+@login_required
 @app.route('/stats')
 def stats():
     # Query to get the sum of value_pln grouped by period for the current user

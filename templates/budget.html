@@ -5,7 +5,6 @@
   <div class="container">
     <p></p>
     <h1>Budżet za okres 0<label id="selected-month-label">0</label>/2024</h1>
-<!--    <label for="month-select">Wanna change month? <select id="month-select"></select></label>-->
 
     <div class="form-floating">
         <select
@@ -17,7 +16,7 @@
       </div>
     <p></p>
     <p>Budżet to narzędzie służące do zarządzania finansami, które pomaga w planowaniu i kontrolowaniu przychodów oraz wydatków. Estymacja zarobków umożliwia prognozowanie planowanych dochodów, opierając się na przewidywaniach i planach finansowych. Rzeczywiste zarobki odnoszą się do faktycznych dochodów, które zostały osiągnięte w danym okresie. Estymacja wydatków pozwala szacować przyszłe wydatki, uwzględniając planowane wydatki na różne kategorie i potrzeby. Rzeczywiste wydatki to suma pieniędzy, które faktycznie zostały wydane w określonym czasie. </p>
-<!--    <h4>Total outcome: <span id="total">0</span> PLN</h4>-->
+
       <canvas id="myChartest" width="800" height="200"></canvas>
       <canvas id="myChartreal" width="800" height="200"></canvas>
       <table>
@@ -98,12 +97,10 @@
       </table>
     </div>
 
-<!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
-<!--      <button id="export-btn-income" class="btn btn-primary">Export Data</button>-->
-<!--    <p id="export"></p>-->
+
     <br><br>
       <div id="table-outcome" class="table-editable">
-        <h3>Outcome <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
+        <h3>Wydatki <button class="table-add btn btn-success" aria-label="Add Row"><i class="fas fa-plus"></i></button></h3>
 
         <table id='outcomeTable-outcome' class="table" style="table-layout: fixed;">
           <thead>
@@ -120,7 +117,7 @@
             {% if value[0].is_income == 0 %}
                   <td id='5' contenteditable="true">{{value[0].name}}</td>
                       <td></td>
-<!--                  <td id='6' contenteditable="false">{{value[0].value_pcs}}</td>-->
+
                   <td id='7' contenteditable="true">{% if value[0].estimated %}{{ value[0].estimated }}{% endif %}</td>
                   <td id='8' contenteditable="true">{% if value[0].amount %}{{ value[0].amount }}{% endif %}</td>
 
@@ -137,32 +134,20 @@
         </table>
       </div>
 
-  <!--    <button id="pattern-btn" class="btn btn-primary">Save pattern</button>-->
+
         <button id="export-btn-outcome" class="btn btn-primary">Zapisz dane</button>
-  <!--    <p id="export"></p>-->
+
       </div>
-    </div>
-<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
+
 <script>
-  var $TABLE = $("#table");
+
   var $BTN = $("#export-btn-outcome");
-  var $EXPORT = $("#export");
+
 var estimatedValues = [
-    // {
-    //     label: 'Dataset 1',
-    //     data: [43355], // Tablica danych z jedną wartością
-    //     backgroundColor: '#003C43',
-    //     stack: 'Stack 0',
-    // },
-    // {
-    //     label: 'Dataset 2',
-    //     data: [45335], // Tablica danych z jedną wartością
-    //     backgroundColor: '#003C43',
-    //     stack: 'Stack 0',
-    // }
+
 ];
 var realValues = [];
-var datasetCombined = [];
 const labels = [''];
 
 const setIncomesRealColors = [];
@@ -178,12 +163,12 @@ const greenEstimatedColors = ['#336633', '#408040', '#669966', '#66b366', '#99cc
 let i = 0;
 
   function addDataset(label, data, stack, type){
-      let backgroundColor = ['#ffffff'];//baseBackgroundColors[estimatedValues.length % 10];
+      let backgroundColor = ['#ffffff'];
       if (typeof data === 'number') {
         data = [data];
-        // console.log(data)
+
     }
-    // stack 0 - incomes // stack 1 - outcomes // type 0 - estimated // type 1 - real //
+
 
       if(type===0 && stack==='Stack 0')
          backgroundColor = setIncomesEstimatedColors[i % 10];
@@ -202,7 +187,7 @@ let i = 0;
           backgroundColor: backgroundColor,
           stack:stack,
       }
-      //console.log('is this refreshed?');
+
       if(type === 0)
         estimatedValues.push(newDataset);
       else
@@ -475,14 +460,8 @@ $BTN.click(function () {
     });
   });
 
-        // Funkcja do generowania losowych danych
-// function generateRandomData(count, min, max) {
-//             return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
-//         }
-
-        // Ustawienia wykresu
+  // Ustawienia wykresu
 const DATA_COUNT = 7;
-// const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
 
 
 

@@ -127,6 +127,7 @@
     const repaymentPlan = [];
     let repaymentPlanAlert = '';
     function generatePlanStale(interestRate, numberOfPayments, amount, needtopush) {
+      console.log(interestRate, numberOfPayments, amount, needtopush);
       console.log("uruchamiam liczenie rat stałych");
       repaymentPlan.splice(0, repaymentPlan.length);
       const monthlyInterestRate = interestRate / 12 / 100;
@@ -156,8 +157,9 @@
       return 0;
     }
 
-    function generateRepaymentMal(startDate, interestRate, numberOfPayments, amount, needtopush) {
+    function generateRepaymentMal(interestRate, numberOfPayments, amount, needtopush) {
       console.log("uruchamiam liczenie rat malejących");
+      console.log(interestRate, numberOfPayments, amount, needtopush);
       repaymentPlan.splice(0, repaymentPlan.length);
       let repaymentPlanAlert = '';
       const monthlyInterestRate = interestRate / 12 / 100;
@@ -368,8 +370,10 @@ $('.container').on("click", ".table-lookup", function () {
     var typeOfInstallments = row.find("td:nth-child(5)").text();
     // Wywołaj odpowiednią funkcję w zależności od rodzaju odsetek
     if (typeOfInstallments === 'mal') {
+      console.log('ogarniam mal')
         generateRepaymentMal(parseFloat(interestRate), parseInt(numberOfPayments), parseFloat(amount));
     } else if (typeOfInstallments === 'st') {
+      console.log('ogarniam st')
         generatePlanStale(parseFloat(interestRate), parseInt(numberOfPayments), parseFloat(amount));
     } else {
         alert('Proszę wybrać rodzaj odsetek.');
